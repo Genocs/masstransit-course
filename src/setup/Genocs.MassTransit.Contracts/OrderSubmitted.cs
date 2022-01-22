@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Genocs.MassTransitContracts
+namespace Genocs.MassTransit.Contracts
 {
-    public interface SubmitOrder
+    public interface OrderSubmitted
     {
         Guid OrderId { get; }
         DateTime Timestamp { get; }

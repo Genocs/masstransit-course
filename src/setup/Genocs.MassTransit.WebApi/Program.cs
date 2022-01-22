@@ -1,4 +1,4 @@
-using Genocs.MassTransitContracts;
+using Genocs.MassTransit.Components.Consumers;
 using MassTransit;
 using MassTransit.Definition;
 using Microsoft.ApplicationInsights.DependencyCollector;
@@ -16,6 +16,9 @@ Log.Logger = new LoggerConfiguration()
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, lc) => lc
+    .WriteTo.Console());
 
 builder.Services.AddApplicationInsightsTelemetry();
 
@@ -36,25 +39,20 @@ builder.Services.Configure<HealthCheckPublisherOptions>(options =>
 });
 
 
+
 builder.Services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
-builder.Services.AddMassTransit(mt =>
+
+builder.Services.AddMassTransit(x =>
 {
-    mt.UsingRabbitMq((context, cfg) =>
+    x.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
+
+    x.UsingInMemory((context, cfg) =>
     {
-        //cfg.Host();
+        cfg.TransportConcurrencyLimit = 100;
 
-        MessageDataDefaults.ExtraTimeToLive = TimeSpan.FromDays(1);
-        MessageDataDefaults.Threshold = 2000;
-        MessageDataDefaults.AlwaysWriteToRepository = false;
-
-        //cfg.UseMessageData(new MongoDbMessageDataRepository(IsRunningInContainer ? "mongodb://mongo" : "mongodb://127.0.0.1", "attachments"));
+        cfg.ConfigureEndpoints(context);
     });
-
-    //mt.AddRequestClient<SubmitOrder>(new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
-
-    mt.AddRequestClient<OrderStatus>();
 });
-
 
 
 builder.Services.AddMassTransitHostedService();
@@ -73,8 +71,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-
 
 app.Run();
 

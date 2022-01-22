@@ -1,7 +1,5 @@
-using Genocs.MassTransit.Components.Consumers;
-using Genocs.MassTransitContracts;
+using Genocs.MassTransit.Contracts;
 using MassTransit;
-using MassTransit.Definition;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Genocs.MassTransit.WebApi.Controllers
@@ -14,55 +12,41 @@ namespace Genocs.MassTransit.WebApi.Controllers
 
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly ISendEndpointProvider _sendEndpointProvider;
-        //       private readonly IRequestClient<SubmitOrder> _submitOrderRequestClient;
-        private readonly IRequestClient<OrderStatus> _checkOrderClient;
 
         public OrderController(ILogger<OrderController> logger,
-            ISendEndpointProvider sendEndpointProvider, IPublishEndpoint publishEndpoint,
-            IRequestClient<OrderStatus> checkOrderClient)
+                                IPublishEndpoint publishEndpoint,
+                                ISendEndpointProvider sendEndpointProvider)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
             _sendEndpointProvider = sendEndpointProvider ?? throw new ArgumentNullException(nameof(sendEndpointProvider));
-            _checkOrderClient = checkOrderClient ?? throw new ArgumentNullException(nameof(checkOrderClient));
-            //            _submitOrderRequestClient = submitOrderRequestClient;
-
         }
-
 
         [HttpGet(Name = "")]
         public async Task<IActionResult> Get(Guid orderId)
+            => await Task.FromResult(Ok());
+
+        [HttpPost(Name = "")]
+        public async Task<IActionResult> Post(Guid orderId, string customerNumber)
         {
-            var (orderStatus, notFound) = await _checkOrderClient.GetResponse<OrderStatus, OrderNotFound>(new
-            {
-                orderId
-            });
+            _logger.LogInformation("Publish SubmitOrder {orderId} to Consumer.", orderId);
 
-            if (orderStatus.IsCompletedSuccessfully)
+            await _publishEndpoint.Publish<SubmitOrder>(new
             {
-                var response = await orderStatus;
-                return Ok(response.Message);
-            } 
-            else
-            {
-                var response = await notFound;
-                return NotFound(response.Message);
-            }
-        }
-
-        [HttpPut(Name = "")]
-        public async Task<IActionResult> Put(Guid id, string customerNumber)
-        {
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
-
-            await endpoint.Send<SubmitOrder>(new
-            {
-                OrderId = id,
+                OrderId = orderId,
                 InVar.Timestamp,
                 CustomerNumber = customerNumber
             });
 
+            _logger.LogInformation("{orderId} Sent to Consumer.", orderId);
+
             return await Task.FromResult(Ok());
         }
+
+        [HttpPut(Name = "")]
+        public async Task<IActionResult> Put(Guid orderId, string customerNumber)
+            => await Task.FromResult(Ok());
+
+
     }
 }
