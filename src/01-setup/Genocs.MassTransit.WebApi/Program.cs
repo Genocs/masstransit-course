@@ -1,4 +1,5 @@
 using Genocs.MassTransit.Components.Consumers;
+using Genocs.MassTransit.Contracts;
 using MassTransit;
 using MassTransit.Definition;
 using Microsoft.ApplicationInsights.DependencyCollector;
@@ -49,9 +50,10 @@ builder.Services.AddMassTransit(x =>
     x.UsingInMemory((context, cfg) =>
     {
         cfg.TransportConcurrencyLimit = 100;
-
         cfg.ConfigureEndpoints(context);
     });
+
+    x.AddRequestClient<SubmitOrder>();
 });
 
 

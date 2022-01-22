@@ -16,7 +16,8 @@ namespace Genocs.MassTransit.Components.StateMachines
         {
             _logger = logger;
 
-
+            // *****************************
+            // Event Section
             Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => OrderStatusRequested, x =>
             {
@@ -31,8 +32,12 @@ namespace Genocs.MassTransit.Components.StateMachines
                ));
             });
 
+            // *****************************
+            // State Section
             InstanceState(x => x.CurrentState);
 
+            // *****************************
+            // State Machine Section
             Initially(
                 When(OrderSubmitted)
                     .Then(context =>
@@ -41,6 +46,7 @@ namespace Genocs.MassTransit.Components.StateMachines
                         context.Instance.LastUpdate = DateTime.UtcNow;
                     })
                     .TransitionTo(Submitted)
+
                 );
 
             DuringAny(
@@ -48,10 +54,9 @@ namespace Genocs.MassTransit.Components.StateMachines
                     .RespondAsync(x => x.Init<OrderStatus>(new
                     {
                         OrderId = x.Instance.CorrelationId,
-                        Status = x.Instance.CurrentState,                        
+                        Status = x.Instance.CurrentState,
                     }))
                 );
-
         }
 
         public State Submitted { get; private set; }

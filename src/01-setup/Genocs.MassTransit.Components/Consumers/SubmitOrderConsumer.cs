@@ -31,6 +31,14 @@ namespace Genocs.MassTransit.Components.Consumers
                 context.Message.PaymentCardNumber,
                 context.Message.Notes
             });
+
+            if (context.RequestId != null)
+                await context.RespondAsync<OrderSubmitted>(new
+                {
+                    InVar.Timestamp,
+                    context.Message.OrderId,
+                    context.Message.CustomerNumber
+                });
         }
     }
 }

@@ -1,3 +1,4 @@
+using Genocs.MassTransit.Components.Consumers;
 using Genocs.MassTransit.Contracts;
 using MassTransit;
 using MassTransit.Definition;
@@ -38,7 +39,10 @@ builder.Services.Configure<HealthCheckPublisherOptions>(options =>
     options.Predicate = check => check.Tags.Contains("ready");
 });
 
+
+
 builder.Services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
+
 builder.Services.AddMassTransit(x =>
 {
     x.UsingRabbitMq((context, cfg) =>
@@ -47,6 +51,8 @@ builder.Services.AddMassTransit(x =>
         MessageDataDefaults.Threshold = 2000;
         MessageDataDefaults.AlwaysWriteToRepository = false;
     });
+
+    x.AddRequestClient<SubmitOrder>();
 });
 
 

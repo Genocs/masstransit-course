@@ -1,3 +1,4 @@
+using Genocs.MassTransit.Components.Consumers;
 using Genocs.MassTransit.Contracts;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
@@ -11,15 +12,15 @@ namespace Genocs.MassTransit.WebApi.Controllers
         private readonly ILogger<OrderController> _logger;
 
         private readonly IPublishEndpoint _publishEndpoint;
-        private readonly ISendEndpointProvider _sendEndpointProvider;
+        private readonly IRequestClient<SubmitOrder> _requestClient;
 
         public OrderController(ILogger<OrderController> logger,
                                 IPublishEndpoint publishEndpoint,
-                                ISendEndpointProvider sendEndpointProvider)
+                                IRequestClient<SubmitOrder> requestClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
-            _sendEndpointProvider = sendEndpointProvider ?? throw new ArgumentNullException(nameof(sendEndpointProvider));
+            _requestClient = requestClient ?? throw new ArgumentNullException(nameof(requestClient));
         }
 
         [HttpGet(Name = "")]
@@ -45,8 +46,15 @@ namespace Genocs.MassTransit.WebApi.Controllers
 
         [HttpPut(Name = "")]
         public async Task<IActionResult> Put(Guid orderId, string customerNumber)
-            => await Task.FromResult(Ok());
+        {
+            var response = await _requestClient.GetResponse<OrderSubmitted>(new
+            {
+                OrderId = orderId,
+                InVar.Timestamp,
+                CustomerNumber = customerNumber
+            });
 
-
+            return Ok(response.Message.OrderId);
+        }
     }
 }

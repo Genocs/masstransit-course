@@ -41,11 +41,20 @@ namespace Genocs.MassTransit.WebApi.Controllers
                 CustomerNumber = customerNumber
             });
 
-            return await Task.FromResult(Ok());
+            return Ok(orderId);
         }
 
         [HttpPut(Name = "")]
         public async Task<IActionResult> Put(Guid orderId, string customerNumber)
-            => await Task.FromResult(Ok());
+        {
+            await _publishEndpoint.Publish<SubmitOrder>(new
+            {
+                OrderId = orderId,
+                InVar.Timestamp,
+                CustomerNumber = customerNumber
+            });
+
+            return Ok(orderId);
+        }
     }
 }

@@ -12,21 +12,17 @@ namespace Genocs.MassTransit.WebApi.Controllers
     {
         private readonly ILogger<OrderController> _logger;
 
-        private readonly IPublishEndpoint _publishEndpoint;
         private readonly ISendEndpointProvider _sendEndpointProvider;
-        //       private readonly IRequestClient<SubmitOrder> _submitOrderRequestClient;
+
         private readonly IRequestClient<OrderStatus> _checkOrderClient;
 
         public OrderController(ILogger<OrderController> logger,
-            ISendEndpointProvider sendEndpointProvider, IPublishEndpoint publishEndpoint,
+            ISendEndpointProvider sendEndpointProvider, 
             IRequestClient<OrderStatus> checkOrderClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _publishEndpoint = publishEndpoint ?? throw new ArgumentNullException(nameof(publishEndpoint));
             _sendEndpointProvider = sendEndpointProvider ?? throw new ArgumentNullException(nameof(sendEndpointProvider));
             _checkOrderClient = checkOrderClient ?? throw new ArgumentNullException(nameof(checkOrderClient));
-            //            _submitOrderRequestClient = submitOrderRequestClient;
-
         }
 
 
@@ -62,7 +58,7 @@ namespace Genocs.MassTransit.WebApi.Controllers
                 CustomerNumber = customerNumber
             });
 
-            return await Task.FromResult(Ok());
+            return Ok(orderId);
         }
 
         [HttpPut(Name = "")]
