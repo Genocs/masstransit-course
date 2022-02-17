@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Service", "Genocs.MassTransit.Service\Genocs.MassTransit.Service.csproj", "{FBF93F6E-28C8-484C-BE8E-34BDC63835B3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.WebApi", "Genocs.MassTransit.WebApi\Genocs.MassTransit.WebApi.csproj", "{1AA85237-7D41-4FEE-B404-A44BA8A269D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Contracts", "Genocs.MassTransit.Contracts\Genocs.MassTransit.Contracts.csproj", "{4B8C149B-C1C6-4461-B5E5-3C8883729DB3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Components", "Genocs.MassTransit.Components\Genocs.MassTransit.Components.csproj", "{CCF24FC1-8596-4331-9DB9-AD06855EA909}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{14C35A10-6C76-4BBF-AE50-3B23BFE8DB5A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genocs.MassTransit.UnitTests", "Genocs.MassTransit.UnitTests\Genocs.MassTransit.UnitTests.csproj", "{15A43850-3B87-42DF-BBF0-3DFC94C820EA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBF93F6E-28C8-484C-BE8E-34BDC63835B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBF93F6E-28C8-484C-BE8E-34BDC63835B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBF93F6E-28C8-484C-BE8E-34BDC63835B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBF93F6E-28C8-484C-BE8E-34BDC63835B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AA85237-7D41-4FEE-B404-A44BA8A269D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AA85237-7D41-4FEE-B404-A44BA8A269D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AA85237-7D41-4FEE-B404-A44BA8A269D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AA85237-7D41-4FEE-B404-A44BA8A269D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4B8C149B-C1C6-4461-B5E5-3C8883729DB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4B8C149B-C1C6-4461-B5E5-3C8883729DB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4B8C149B-C1C6-4461-B5E5-3C8883729DB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4B8C149B-C1C6-4461-B5E5-3C8883729DB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCF24FC1-8596-4331-9DB9-AD06855EA909}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCF24FC1-8596-4331-9DB9-AD06855EA909}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCF24FC1-8596-4331-9DB9-AD06855EA909}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCF24FC1-8596-4331-9DB9-AD06855EA909}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15A43850-3B87-42DF-BBF0-3DFC94C820EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15A43850-3B87-42DF-BBF0-3DFC94C820EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15A43850-3B87-42DF-BBF0-3DFC94C820EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15A43850-3B87-42DF-BBF0-3DFC94C820EA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{15A43850-3B87-42DF-BBF0-3DFC94C820EA} = {14C35A10-6C76-4BBF-AE50-3B23BFE8DB5A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F0F5DD1F-AC14-40B3-9ED2-4DE288A22B0D}
+	EndGlobalSection
+EndGlobal
