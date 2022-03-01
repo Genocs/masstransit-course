@@ -15,7 +15,7 @@ namespace Genocs.MassTransit.WebApi.Controllers
         private readonly IRequestClient<OrderStatus> _checkOrderClient;
 
         public OrderController(ILogger<OrderController> logger,
-            ISendEndpointProvider sendEndpointProvider, 
+            ISendEndpointProvider sendEndpointProvider,
             IRequestClient<OrderStatus> checkOrderClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -48,7 +48,9 @@ namespace Genocs.MassTransit.WebApi.Controllers
         public async Task<IActionResult> Post(Guid orderId, string customerNumber)
         {
             //Genocs.MassTransit.Contracts:OrderSubmitted
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue:Genocs.MassTransit.Contracts:OrderSubmitted"));
+
+            var interfaceType = typeof(OrderSubmitted);
+            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:OrderSubmitted"));
 
             await endpoint.Send<OrderSubmitted>(new
             {
@@ -61,7 +63,18 @@ namespace Genocs.MassTransit.WebApi.Controllers
         }
 
         [HttpPut(Name = "")]
-        public async Task<IActionResult> Put(Guid orderId, string customerNumber)
-            => await Task.FromResult(Ok());
+        public async Task<IActionResult> Put(Guid orderId)
+        {
+            var interfaceType = typeof(OrderSubmitted);
+            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:OrderAccepted"));
+
+            await endpoint.Send<OrderAccepted>(new
+            {
+                OrderId = orderId,
+                InVar.Timestamp,
+            });
+            return Ok(orderId);
+        }
+            
     }
 }

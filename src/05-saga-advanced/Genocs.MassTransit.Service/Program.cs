@@ -1,4 +1,5 @@
 using Genocs.MassTransit.Components.StateMachines;
+using Genocs.MassTransit.Components.StateMachines.Activities;
 using Genocs.MassTransit.Service;
 using MassTransit;
 using MassTransit.Definition;
@@ -35,7 +36,8 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
 
         _module.Initialize(configuration);
 
-        //services.AddScoped<AcceptOrderActivity>();
+        // This is a state machine Activity
+        services.AddScoped<AcceptOrderActivity>();
 
         //services.AddScoped<RoutingSlipBatchEventConsumer>();
 
@@ -43,7 +45,7 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
         services.AddMassTransit(cfg =>
         {
             //cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
-            //cfg.AddActivitiesFromNamespaceContaining<AllocateInventoryActivity>();
+            //cfg.AddActivitiesFromNamespaceContaining<AcceptOrderActivity>();
 
             cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
                 .RedisRepository();
