@@ -10,9 +10,9 @@ namespace Genocs.MassTransit.Components.Consumers
     {
         readonly ILogger<SubmitOrderConsumer> _logger;
 
-        public SubmitOrderConsumer()
-        {
-        }
+        //public SubmitOrderConsumer()
+        //{
+        //}
 
         public SubmitOrderConsumer(ILogger<SubmitOrderConsumer> logger)
         {
