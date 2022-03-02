@@ -1,3 +1,5 @@
+using Genocs.MassTransit.Components.Consumers;
+using Genocs.MassTransit.Components.CourierActivities;
 using Genocs.MassTransit.Components.StateMachines;
 using Genocs.MassTransit.Components.StateMachines.Activities;
 using Genocs.MassTransit.Service;
@@ -44,14 +46,18 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
         services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
         services.AddMassTransit(cfg =>
         {
-            //cfg.AddConsumersFromNamespaceContaining<SubmitOrderConsumer>();
-            //cfg.AddActivitiesFromNamespaceContaining<AcceptOrderActivity>();
+            // Consumer configuration
+            cfg.AddConsumersFromNamespaceContaining<FulfillOrderConsumer>();
+
+            // Routing slip configuration
+            cfg.AddActivitiesFromNamespaceContaining<AllocateInventoryActivity>();
 
             cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
                 .RedisRepository();
 
             cfg.UsingRabbitMq(ConfigureBus);
 
+            // Request client configuration
             //cfg.AddRequestClient<AllocateInventory>();
         });
 
@@ -87,5 +93,6 @@ static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryCon
     //    });
     //});
 
+    // This configuration will configure the Activity Definition
     configurator.ConfigureEndpoints(context);
 }

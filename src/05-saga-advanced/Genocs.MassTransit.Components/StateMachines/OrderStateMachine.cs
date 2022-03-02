@@ -5,6 +5,7 @@ using MassTransit;
 using MassTransit.Saga;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Linq;
 
 namespace Genocs.MassTransit.Components.StateMachines
 {
@@ -22,6 +23,11 @@ namespace Genocs.MassTransit.Components.StateMachines
             Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
 
+            Event(() => FulfillmentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
+
+            Event(() => FulfillOrderFaulted, x => x.CorrelateById(m => m.Message.Message.OrderId));
+
             Event(() => OrderStatusRequested, x =>
             {
                 x.CorrelateById(m => m.Message.OrderId);
@@ -34,6 +40,8 @@ namespace Genocs.MassTransit.Components.StateMachines
                 }
                ));
             });
+
+            //Event(() => AccountClosed, x => x.CorrelateBy((saga, context) => saga.CustomerNumber == context.Message.CustomerNumber));
 
             // *****************************
             // State Section
@@ -59,6 +67,19 @@ namespace Genocs.MassTransit.Components.StateMachines
                     .Activity(x => x.OfType<AcceptOrderActivity>())
                     .TransitionTo(Accepted));
 
+
+            During(Accepted,
+                When(FulfillmentFaulted)
+                    .Then(context => _logger.Log(LogLevel.Debug, "FulfillmentFaulted: {OrderId}", context.Data.OrderId))
+                    .TransitionTo(Faulted),
+                When(FulfillOrderFaulted)
+                    .Then(context => _logger.Log(LogLevel.Error, "Fulfill Order Faulted: {0}", context.Data.Exceptions.FirstOrDefault()?.Message))
+                    .TransitionTo(Faulted),
+                When(FulfillmentCompleted)
+                    .Then(context => _logger.Log(LogLevel.Debug, "FulfillmentCompleted: {OrderId}", context.Data.OrderId))
+                    .TransitionTo(Completed)
+                    .Finalize());
+
             DuringAny(
                 When(OrderStatusRequested)
                     .RespondAsync(x => x.Init<OrderStatus>(new
@@ -67,16 +88,26 @@ namespace Genocs.MassTransit.Components.StateMachines
                         CustomerNumber = x.Instance.CustomerNumber,
                         Status = x.Instance.CurrentState,
                     }))
-                );
+                ); 
+
+            SetCompletedWhenFinalized();
+
         }
 
         public State Submitted { get; private set; }
         public State Accepted { get; private set; }
+        public State Completed { get; private set; }
+        public State Faulted { get; private set; }
 
         public Event<OrderSubmitted> OrderSubmitted { get; private set; }
         public Event<OrderAccepted> OrderAccepted { get; private set; }
 
+        public Event<OrderFulfillmentCompleted> FulfillmentCompleted { get; private set; }
+        public Event<OrderFulfillmentFaulted> FulfillmentFaulted { get; private set; }
+        public Event<Fault<FulfillOrder>> FulfillOrderFaulted { get; private set; }
         public Event<OrderStatus> OrderStatusRequested { get; private set; }
+
+
     }
 
     public class OrderState : SagaStateMachineInstance, ISagaVersion

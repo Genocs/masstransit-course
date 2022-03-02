@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Genocs.Service6": {
+    "Genocs.MassTransit.Service": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"

@@ -2,6 +2,7 @@
 using Genocs.MassTransit.Contracts;
 using GreenPipes;
 using MassTransit;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
@@ -10,6 +11,14 @@ namespace Genocs.MassTransit.Components.StateMachines.Activities
     public class AcceptOrderActivity :
         Activity<OrderState, OrderAccepted>
     {
+
+        private readonly ILogger<AcceptOrderActivity> _logger;
+
+        public AcceptOrderActivity(ILogger<AcceptOrderActivity> logger)
+        {
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
         public void Probe(ProbeContext context)
         {
             context.CreateScope("accept-order");
@@ -22,18 +31,18 @@ namespace Genocs.MassTransit.Components.StateMachines.Activities
 
         public async Task Execute(BehaviorContext<OrderState, OrderAccepted> context, Behavior<OrderState, OrderAccepted> next)
         {
-            Console.WriteLine("Executing, AcceptOrderActivity. Order is {0}", context.Data.OrderId);
+            _logger.LogInformation("Executing, AcceptOrderActivity. Order is {0}", context.Data.OrderId);
 
             var consumeContext = context.GetPayload<ConsumeContext>();
 
             var sendEndpoint = await consumeContext.GetSendEndpoint(new Uri("queue:fulfill-order"));
 
-            //await sendEndpoint.Send<FulfillOrder>(new
-            //{
-            //    context.Data.OrderId,
-            //    context.Instance.CustomerNumber,
-            //    context.Instance.PaymentCardNumber,
-            //});
+            await sendEndpoint.Send<FulfillOrder>(new
+            {
+                context.Data.OrderId,
+                context.Instance.CustomerNumber,
+                PaymentCardNumber = "123456789",  
+            });
 
             await next.Execute(context).ConfigureAwait(false);
         }
