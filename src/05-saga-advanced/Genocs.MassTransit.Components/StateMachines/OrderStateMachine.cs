@@ -2,7 +2,6 @@
 using Genocs.MassTransit.Components.StateMachines.Activities;
 using Genocs.MassTransit.Contracts;
 using MassTransit;
-using MassTransit.Saga;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
@@ -41,7 +40,13 @@ namespace Genocs.MassTransit.Components.StateMachines
                ));
             });
 
-            //Event(() => AccountClosed, x => x.CorrelateBy((saga, context) => saga.CustomerNumber == context.Message.CustomerNumber));
+            Event(() => AccountClosed, x => x.CorrelateBy((saga, context) => saga.CustomerNumber == context.Message.CustomerNumber));
+
+            //Schedule(() => HoldExpiration, x => x.HoldDurationToken, s =>
+            //{
+            //    s.Delay = TimeSpan.FromHours(1);
+            //    s.Received = x => x.CorrelateById(m => m.Message.AllocationId);
+            //});
 
             // *****************************
             // State Section
@@ -88,7 +93,7 @@ namespace Genocs.MassTransit.Components.StateMachines
                         CustomerNumber = x.Instance.CustomerNumber,
                         Status = x.Instance.CurrentState,
                     }))
-                ); 
+                );
 
             SetCompletedWhenFinalized();
 
@@ -96,26 +101,21 @@ namespace Genocs.MassTransit.Components.StateMachines
 
         public State Submitted { get; private set; }
         public State Accepted { get; private set; }
+
+        public State Canceled { get; private set; }
         public State Completed { get; private set; }
         public State Faulted { get; private set; }
 
         public Event<OrderSubmitted> OrderSubmitted { get; private set; }
         public Event<OrderAccepted> OrderAccepted { get; private set; }
 
+        public Event<CustomerAccountClosed> AccountClosed { get; private set; }
+
         public Event<OrderFulfillmentCompleted> FulfillmentCompleted { get; private set; }
         public Event<OrderFulfillmentFaulted> FulfillmentFaulted { get; private set; }
         public Event<Fault<FulfillOrder>> FulfillOrderFaulted { get; private set; }
         public Event<OrderStatus> OrderStatusRequested { get; private set; }
 
-
-    }
-
-    public class OrderState : SagaStateMachineInstance, ISagaVersion
-    {
-        public Guid CorrelationId { get; set; }
-        public string CurrentState { get; set; }
-        public string CustomerNumber { get; set; }
-        public DateTime LastUpdate { get; set; }
-        public int Version { get; set; }
+        //public Schedule<OrderState, AllocationHoldDurationExpired> HoldExpiration { get; set; }
     }
 }

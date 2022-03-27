@@ -1,13 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<UserSecretsId>dotnet-Genocs.Service6-EC357E9F-A692-4853-B4B3-3745D9C04BAF</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
-
 
 	<ItemGroup>
 		<PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
@@ -31,7 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Genocs.MassTransit.Components\Genocs.MassTransit.Components.csproj" />
-		<ProjectReference Include="..\Genocs.MassTransit.Contracts\Genocs.MassTransit.Contracts.csproj" />
+	  <ProjectReference Include="..\Genocs.MassTransit.Warehouse.Components\Genocs.MassTransit.Warehouse.Components.csproj" />
 	</ItemGroup>
+
 </Project>

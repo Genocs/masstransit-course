@@ -1,9 +1,6 @@
-using Genocs.MassTransit.Components.Consumers;
-using Genocs.MassTransit.Components.CourierActivities;
-using Genocs.MassTransit.Components.StateMachines;
-using Genocs.MassTransit.Components.StateMachines.Activities;
-using Genocs.MassTransit.Services;
-using Genocs.MassTransit.Warehouse.Contracts;
+﻿using Genocs.MassTransit.Services;
+using Genocs.MassTransit.Warehouse.Components.Consumers;
+using Genocs.MassTransit.Warehouse.Components.StateMachines;
 using MassTransit;
 using MassTransit.Definition;
 using MassTransit.RabbitMqTransport;
@@ -39,27 +36,21 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
 
         _module.Initialize(configuration);
 
-        // This is a state machine Activity
-        services.AddScoped<AcceptOrderActivity>();
-
-        //services.AddScoped<RoutingSlipBatchEventConsumer>();
-
         services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
         services.AddMassTransit(cfg =>
         {
             // Consumer configuration
-            cfg.AddConsumersFromNamespaceContaining<FulfillOrderConsumer>();
+            cfg.AddConsumersFromNamespaceContaining<AllocateInventoryConsumer>();
 
             // Routing slip configuration
-            cfg.AddActivitiesFromNamespaceContaining<AllocateInventoryActivity>();
 
-            cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
+            cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>(typeof(AllocateStateMachineDefinition))
                 .RedisRepository();
 
             cfg.UsingRabbitMq(ConfigureBus);
 
             // Request client configuration
-            cfg.AddRequestClient<AllocateInventory>();
+            //cfg.AddRequestClient<AllocateInventory>();
         });
 
         services.AddHostedService<MassTransitConsoleHostedService>();

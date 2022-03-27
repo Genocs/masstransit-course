@@ -20,12 +20,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console());
 
+// Azure Application Insight configuration 
 builder.Services.AddApplicationInsightsTelemetry();
 
 builder.Services.ConfigureTelemetryModule<DependencyTrackingTelemetryModule>((module, o) =>
 {
     module.IncludeDiagnosticSourceActivities.Add("MassTransit");
 });
+// Azure Application Insight configuration - END
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -19,19 +19,24 @@ namespace Genocs.MassTransit.Components.Consumers
 
             var builder = new RoutingSlipBuilder(NewId.NextGuid());
 
+            // Add the activities for the Routing slip Consumer
+
+            // Activity Number ONE AllocateInventory
             builder.AddActivity("AllocateInventory", new Uri("queue:allocate-inventory_execute"), new
-            {
-                ItemNumber = "ITEM123",
-                Quantity = 10.0m
-            });
+                {
+                    ItemNumber = "ITEM123",
+                    Quantity = 10.0m
+                });
 
-            //builder.AddActivity("PaymentActivity", new Uri("queue:payment_execute"),
-            //    new
-            //    {
-            //        CardNumber = context.Message.PaymentCardNumber ?? "5999-1234-5678-9012",
-            //        Amount = 99.95m
-            //    });
+            // Activity Number TWO PaymentActivity
+            builder.AddActivity("PaymentActivity", new Uri("queue:payment_execute"),
+                new
+                {
+                    CardNumber = context.Message.PaymentCardNumber ?? "5999-1234-5678-9012",
+                    Amount = 99.95m
+                });
 
+            // Add the variable, so it can be accessible into the Messages
             builder.AddVariable("OrderId", context.Message.OrderId);
 
             await builder.AddSubscription(context.SourceAddress,

@@ -1,9 +1,9 @@
-using MassTransit;
+﻿using MassTransit;
 
 namespace Genocs.MassTransit.Services
 {
     public class MassTransitConsoleHostedService :
-        IHostedService
+    IHostedService
     {
         readonly IBusControl _bus;
 

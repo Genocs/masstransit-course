@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using Genocs.MassTransit.Warehouse.Contracts;
+using MassTransit;
 using MassTransit.Courier;
 using System;
 using System.Threading.Tasks;
@@ -8,11 +9,11 @@ namespace Genocs.MassTransit.Components.CourierActivities
     public class AllocateInventoryActivity :
             IActivity<AllocateInventoryArguments, AllocateInventoryLog>
     {
-        //readonly IRequestClient<AllocateInventory> _client;
+        readonly IRequestClient<AllocateInventory> _client;
 
-        public AllocateInventoryActivity(/*IRequestClient<AllocateInventory> client*/)
+        public AllocateInventoryActivity(IRequestClient<AllocateInventory> client)
         {
-            //_client = client;
+            _client = client ?? throw new ArgumentNullException(nameof(client));
         }
 
         public async Task<ExecutionResult> Execute(ExecuteContext<AllocateInventoryArguments> context)
@@ -29,23 +30,23 @@ namespace Genocs.MassTransit.Components.CourierActivities
 
             var allocationId = NewId.NextGuid();
 
-            //var response = await _client.GetResponse<InventoryAllocated>(new
-            //{
-            //    AllocationId = allocationId,
-            //    ItemNumber = itemNumber,
-            //    Quantity = quantity
-            //});
+            var response = await _client.GetResponse<InventoryAllocated>(new
+            {
+                AllocationId = allocationId,
+                ItemNumber = itemNumber,
+                Quantity = quantity
+            });
 
             return context.Completed(new { AllocationId = allocationId });
         }
 
         public async Task<CompensationResult> Compensate(CompensateContext<AllocateInventoryLog> context)
         {
-            //await context.Publish<AllocationReleaseRequested>(new
-            //{
-            //    context.Log.AllocationId,
-            //    Reason = "Order Faulted"
-            //});
+            await context.Publish<AllocationReleaseRequested>(new
+            {
+                context.Log.AllocationId,
+                Reason = "Order Faulted"
+            });
 
             return context.Compensated();
         }
