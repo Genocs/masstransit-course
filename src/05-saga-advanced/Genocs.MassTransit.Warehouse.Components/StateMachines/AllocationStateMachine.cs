@@ -1,9 +1,7 @@
 ﻿using Automatonymous;
 using Genocs.MassTransit.Warehouse.Contracts;
 using MassTransit;
-using MassTransit.Saga;
 using Microsoft.Extensions.Logging;
-using MongoDB.Bson.Serialization.Attributes;
 using System;
 
 namespace Genocs.MassTransit.Warehouse.Components.StateMachines

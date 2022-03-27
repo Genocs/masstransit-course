@@ -1,23 +1,28 @@
 ﻿using Genocs.MassTransit.Warehouse.Contracts;
 using MassTransit;
-using System;
 using System.Threading.Tasks;
 
 namespace Genocs.MassTransit.Warehouse.Components.Consumers
 {
-    public class AllocateInventoryConsumer :
-        IConsumer<AllocateInventory>
+    /// <summary>
+    /// This consumer handle the event coming from the request to allocate the Inventory 
+    /// </summary>
+    public class AllocateInventoryConsumer : IConsumer<AllocateInventory>
     {
         public async Task Consume(ConsumeContext<AllocateInventory> context)
         {
+            // Publish the Event handled by the AllocationStateMachine
+            // The state machine will keep the allocation 
             await context.Publish<AllocationCreated>(new
             {
                 context.Message.AllocationId,
                 HoldDuration = 15000,
             });
 
+            
             //throw new InvalidOperationException("Non Va bene");
 
+            // Respond to the client that the allocation went well 
             await context.RespondAsync<InventoryAllocated>(new
             {
                 context.Message.AllocationId,

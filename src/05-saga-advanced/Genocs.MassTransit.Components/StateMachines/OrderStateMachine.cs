@@ -60,6 +60,7 @@ namespace Genocs.MassTransit.Components.StateMachines
                     {
                         _logger.Log(LogLevel.Debug, "OrderSubmitted: {CustomerNumber}", context.Data.CustomerNumber);
                         context.Instance.CustomerNumber = context.Data.CustomerNumber;
+                        context.Instance.PaymentCardNumber = context.Data.PaymentCardNumber;
                         context.Instance.LastUpdate = DateTime.UtcNow;
                     })
                     .TransitionTo(Submitted)

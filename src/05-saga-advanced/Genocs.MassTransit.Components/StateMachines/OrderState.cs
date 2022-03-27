@@ -11,10 +11,7 @@ namespace Genocs.MassTransit.Components.StateMachines
 
         public string CurrentState { get; set; }
         public string CustomerNumber { get; set; }
+        public string PaymentCardNumber { get; set; }
         public DateTime LastUpdate { get; set; }
-
-        //// Scheduler
-        //public Guid HoldDurationToken { get; set; }
-
     }
 }

@@ -41,7 +41,7 @@ namespace Genocs.MassTransit.Components.StateMachines.Activities
             {
                 context.Data.OrderId,
                 context.Instance.CustomerNumber,
-                PaymentCardNumber = "123456789",  
+                context.Instance.PaymentCardNumber
             });
 
             await next.Execute(context).ConfigureAwait(false);

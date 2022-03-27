@@ -45,7 +45,7 @@ namespace Genocs.MassTransit.WebApi.Controllers
         }
 
         [HttpPost(Name = "")]
-        public async Task<IActionResult> Post(Guid orderId, string customerNumber)
+        public async Task<IActionResult> Post(Guid orderId, string customerNumber, string paymentCardNumber)
         {
             //Genocs.MassTransit.Contracts:OrderSubmitted
 
@@ -56,7 +56,8 @@ namespace Genocs.MassTransit.WebApi.Controllers
             {
                 OrderId = orderId,
                 InVar.Timestamp,
-                CustomerNumber = customerNumber
+                CustomerNumber = customerNumber,
+                PaymentCardNumber = paymentCardNumber
             });
 
             return Ok(orderId);
@@ -71,7 +72,7 @@ namespace Genocs.MassTransit.WebApi.Controllers
             await endpoint.Send<OrderAccepted>(new
             {
                 OrderId = orderId,
-                InVar.Timestamp,
+                InVar.Timestamp
             });
             return Ok(orderId);
         }
