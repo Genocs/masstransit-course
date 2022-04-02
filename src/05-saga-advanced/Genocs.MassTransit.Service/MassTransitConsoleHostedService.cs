@@ -1,6 +1,6 @@
 using MassTransit;
 
-namespace Genocs.MassTransit.Services
+namespace Genocs.MassTransit.Service
 {
     public class MassTransitConsoleHostedService :
         IHostedService

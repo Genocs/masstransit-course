@@ -6,5 +6,6 @@ namespace Genocs.MassTransit.Contracts
     {
         Guid OrderId { get; }
         DateTime Timestamp { get; }
+        string CustomerNumber { get; }
     }
 }

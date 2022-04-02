@@ -1,8 +1,9 @@
 using Genocs.MassTransit.Components.Consumers;
 using Genocs.MassTransit.Components.CourierActivities;
+using Genocs.MassTransit.Components.HttpClients;
 using Genocs.MassTransit.Components.StateMachines;
 using Genocs.MassTransit.Components.StateMachines.Activities;
-using Genocs.MassTransit.Services;
+using Genocs.MassTransit.Service;
 using Genocs.MassTransit.Warehouse.Contracts;
 using MassTransit;
 using MassTransit.Definition;
@@ -63,6 +64,10 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
         });
 
         services.AddHostedService<MassTransitConsoleHostedService>();
+
+        // Add services to the container.
+        services.AddHttpClient<CustomerClient>();
+
     })
     .ConfigureLogging((hostingContext, logging) =>
     {

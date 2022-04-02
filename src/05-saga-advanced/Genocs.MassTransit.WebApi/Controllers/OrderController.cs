@@ -49,10 +49,10 @@ namespace Genocs.MassTransit.WebApi.Controllers
         {
             //Genocs.MassTransit.Contracts:OrderSubmitted
 
-            var interfaceType = typeof(OrderSubmitted);
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:OrderSubmitted"));
+            var interfaceType = typeof(CardRequest);
+            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"queue:Genocs.MassTransit.Contracts:CardRequest"));
 
-            await endpoint.Send<OrderSubmitted>(new
+            await endpoint.Send<CardRequest>(new
             {
                 OrderId = orderId,
                 InVar.Timestamp,
@@ -66,7 +66,7 @@ namespace Genocs.MassTransit.WebApi.Controllers
         [HttpPut(Name = "")]
         public async Task<IActionResult> Put(Guid orderId)
         {
-            var interfaceType = typeof(OrderSubmitted);
+            var interfaceType = typeof(OrderAccepted);
             var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:OrderAccepted"));
 
             await endpoint.Send<OrderAccepted>(new

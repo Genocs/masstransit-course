@@ -1,6 +1,6 @@
-﻿using Genocs.MassTransit.Services;
-using Genocs.MassTransit.Warehouse.Components.Consumers;
+﻿using Genocs.MassTransit.Warehouse.Components.Consumers;
 using Genocs.MassTransit.Warehouse.Components.StateMachines;
+using Genocs.MassTransit.Warehouse.Service;
 using MassTransit;
 using MassTransit.Definition;
 using MassTransit.RabbitMqTransport;

@@ -19,7 +19,7 @@ namespace Genocs.MassTransit.Components.StateMachines
 
             // *****************************
             // Event Section
-            Event(() => OrderSubmitted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => CardRequested, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
 
             Event(() => FulfillmentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
@@ -55,10 +55,10 @@ namespace Genocs.MassTransit.Components.StateMachines
             // *****************************
             // State Machine Section
             Initially(
-                When(OrderSubmitted)
+                When(CardRequested)
                     .Then(context =>
                     {
-                        _logger.Log(LogLevel.Debug, "OrderSubmitted: {CustomerNumber}", context.Data.CustomerNumber);
+                        _logger.Log(LogLevel.Debug, "CardRequested: {CustomerNumber}", context.Data.CustomerNumber);
                         context.Instance.CustomerNumber = context.Data.CustomerNumber;
                         context.Instance.PaymentCardNumber = context.Data.PaymentCardNumber;
                         context.Instance.LastUpdate = DateTime.UtcNow;
@@ -68,7 +68,7 @@ namespace Genocs.MassTransit.Components.StateMachines
                 );
 
             During(Submitted,
-                Ignore(OrderSubmitted),
+                Ignore(CardRequested),
                 When(OrderAccepted)
                     .Activity(x => x.OfType<AcceptOrderActivity>())
                     .TransitionTo(Accepted));
@@ -107,7 +107,7 @@ namespace Genocs.MassTransit.Components.StateMachines
         public State Completed { get; private set; }
         public State Faulted { get; private set; }
 
-        public Event<OrderSubmitted> OrderSubmitted { get; private set; }
+        public Event<CardRequested> CardRequested { get; private set; }
         public Event<OrderAccepted> OrderAccepted { get; private set; }
 
         public Event<CustomerAccountClosed> AccountClosed { get; private set; }
@@ -116,7 +116,5 @@ namespace Genocs.MassTransit.Components.StateMachines
         public Event<OrderFulfillmentFaulted> FulfillmentFaulted { get; private set; }
         public Event<Fault<FulfillOrder>> FulfillOrderFaulted { get; private set; }
         public Event<OrderStatus> OrderStatusRequested { get; private set; }
-
-        //public Schedule<OrderState, AllocationHoldDurationExpired> HoldExpiration { get; set; }
     }
 }

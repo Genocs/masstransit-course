@@ -2,12 +2,10 @@
 
 namespace Genocs.MassTransit.Contracts
 {
-    public interface OrderSubmitted
+    public interface CustomerValidationCompleted
     {
         Guid OrderId { get; }
         DateTime Timestamp { get; }
         string CustomerNumber { get; }
-        string PaymentCardNumber { get; }
-        string Notes { get; }
     }
 }

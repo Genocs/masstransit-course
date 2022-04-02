@@ -2,7 +2,7 @@
 
 namespace Genocs.MassTransit.Contracts
 {
-    public interface OrderSubmissionRejected
+    public interface OrderRejected
     {
         Guid OrderId { get; }
         DateTime Timestamp { get; }
