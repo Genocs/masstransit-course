@@ -57,6 +57,7 @@ builder.Services.AddMassTransit(x =>
     //mt.AddRequestClient<SubmitOrder>(new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
 
     x.AddRequestClient<OrderStatus>();
+    x.AddRequestClient<PaymentStatus>();
 });
 
 
@@ -73,6 +74,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseAuthorization();
 
 app.MapControllers();
@@ -80,3 +83,8 @@ app.MapControllers();
 app.Run();
 
 Log.CloseAndFlush();
+
+
+
+
+

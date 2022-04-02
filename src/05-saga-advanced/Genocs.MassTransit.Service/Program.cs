@@ -57,6 +57,9 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
             cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
                 .RedisRepository();
 
+            cfg.AddSagaStateMachine<PosStateMachine, PosState>(typeof(PosStateMachineDefinition))
+                .RedisRepository();
+
             cfg.UsingRabbitMq(ConfigureBus);
 
             // Request client configuration
