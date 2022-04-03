@@ -1,5 +1,4 @@
-﻿using Automatonymous;
-using MassTransit.Saga;
+﻿using MassTransit;
 using System;
 
 namespace Genocs.MassTransit.Components.StateMachines

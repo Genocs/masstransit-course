@@ -1,5 +1,4 @@
-﻿using Automatonymous;
-using MassTransit.Saga;
+﻿using MassTransit;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 
@@ -9,7 +8,7 @@ namespace Genocs.MassTransit.Warehouse.Components.StateMachines
         SagaStateMachineInstance,
         ISagaVersion
     {
-        public string CurrentState { get; set; }
+        public string? CurrentState { get; set; }
 
         public Guid? HoldDurationToken { get; set; }
 

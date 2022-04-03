@@ -1,6 +1,5 @@
 using Genocs.MassTransit.Contracts;
 using MassTransit;
-using MassTransit.Definition;
 using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -61,7 +60,7 @@ builder.Services.AddMassTransit(x =>
 });
 
 
-builder.Services.AddMassTransitHostedService();
+//builder.Services.AddMassTransitHostedService();
 
 var app = builder.Build();
 

@@ -1,6 +1,4 @@
-﻿using Automatonymous;
-using Genocs.MassTransit.Contracts;
-using GreenPipes;
+﻿using Genocs.MassTransit.Contracts;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,7 +7,7 @@ using System.Threading.Tasks;
 namespace Genocs.MassTransit.Components.StateMachines.Activities
 {
     public class AcceptOrderActivity :
-        Activity<OrderState, OrderAccepted>
+        IStateMachineActivity<OrderState, OrderAccepted>
     {
 
         private readonly ILogger<AcceptOrderActivity> _logger;
@@ -29,9 +27,10 @@ namespace Genocs.MassTransit.Components.StateMachines.Activities
             visitor.Visit(this);
         }
 
-        public async Task Execute(BehaviorContext<OrderState, OrderAccepted> context, Behavior<OrderState, OrderAccepted> next)
+
+        public async Task Execute(BehaviorContext<OrderState, OrderAccepted> context, IBehavior<OrderState, OrderAccepted> next)
         {
-            _logger.LogInformation("Executing, AcceptOrderActivity. Order is {0}", context.Data.OrderId);
+            _logger.LogInformation("Executing, AcceptOrderActivity. Order is {0}", context.Message.OrderId);
 
             var consumeContext = context.GetPayload<ConsumeContext>();
 
@@ -39,15 +38,15 @@ namespace Genocs.MassTransit.Components.StateMachines.Activities
 
             await sendEndpoint.Send<FulfillOrder>(new
             {
-                context.Data.OrderId,
-                context.Instance.CustomerNumber,
-                context.Instance.PaymentCardNumber
+                context.Message.OrderId,
+                context.Message.CustomerNumber,
+                context.Saga.PaymentCardNumber
             });
 
             await next.Execute(context).ConfigureAwait(false);
         }
 
-        public Task Faulted<TException>(BehaviorExceptionContext<OrderState, OrderAccepted, TException> context, Behavior<OrderState, OrderAccepted> next) where TException : Exception
+        public Task Faulted<TException>(BehaviorExceptionContext<OrderState, OrderAccepted, TException> context, IBehavior<OrderState, OrderAccepted> next) where TException : Exception
         {
             return next.Faulted(context);
         }

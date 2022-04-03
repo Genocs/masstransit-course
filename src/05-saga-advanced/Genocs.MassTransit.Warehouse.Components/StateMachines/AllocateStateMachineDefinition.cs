@@ -1,6 +1,4 @@
-﻿using GreenPipes;
-using MassTransit;
-using MassTransit.Definition;
+﻿using MassTransit;
 
 namespace Genocs.MassTransit.Warehouse.Components.StateMachines
 {

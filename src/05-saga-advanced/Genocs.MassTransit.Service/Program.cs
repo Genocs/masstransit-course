@@ -6,8 +6,6 @@ using Genocs.MassTransit.Components.StateMachines.Activities;
 using Genocs.MassTransit.Service;
 using Genocs.MassTransit.Warehouse.Contracts;
 using MassTransit;
-using MassTransit.Definition;
-using MassTransit.RabbitMqTransport;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DependencyCollector;
 using Microsoft.ApplicationInsights.Extensibility;

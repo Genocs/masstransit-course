@@ -1,10 +1,7 @@
-﻿using Automatonymous;
-using Genocs.MassTransit.Components.StateMachines.Activities;
-using Genocs.MassTransit.Contracts;
+﻿using Genocs.MassTransit.Contracts;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Linq;
 
 namespace Genocs.MassTransit.Components.StateMachines
 {
@@ -54,10 +51,10 @@ namespace Genocs.MassTransit.Components.StateMachines
                 When(PaymentRequested)
                     .Then(context =>
                     {
-                        _logger.Log(LogLevel.Debug, "PaymentRequested: {CustomerNumber}", context.Data.CustomerNumber);
-                        context.Instance.CustomerNumber = context.Data.CustomerNumber;
-                        context.Instance.PaymentCardNumber = context.Data.PaymentCardNumber;
-                        context.Instance.LastUpdate = DateTime.UtcNow;
+                        _logger.Log(LogLevel.Debug, "PaymentRequested: {CustomerNumber}", context.Message.CustomerNumber);
+                        context.Saga.CustomerNumber = context.Message.CustomerNumber;
+                        context.Saga.PaymentCardNumber = context.Message.PaymentCardNumber;
+                        context.Saga.LastUpdate = DateTime.UtcNow;
                     })
                     .TransitionTo(Submitted)
                 );
@@ -77,10 +74,28 @@ namespace Genocs.MassTransit.Components.StateMachines
                  Ignore(PaymentInProgress));
 
             During(Captured,
-                 Ignore(PaymentInProgress));
+                 Ignore(PaymentInProgress),
+                 When(PaymentAuthorized)
+                     .Then(context =>
+                     {
+                         context.Publish<PaymentCompleted>(new
+                         {
+                             context.Saga.PaymentCardNumber
+                         });
+                     })
+                     .TransitionTo(Completed));
 
-            During(Accepted,
-                 Ignore(PaymentInProgress));
+            During(Authorized,
+                 Ignore(PaymentInProgress),
+                 When(PaymentCaptured)
+                     .Then(context =>
+                     {
+                         context.Publish<PaymentCompleted>(new
+                         {
+                             context.Saga.PaymentCardNumber
+                         });
+                     })
+                     .TransitionTo(Completed));
 
             During(InProgress,
                 When(PaymentCaptured)
@@ -92,27 +107,27 @@ namespace Genocs.MassTransit.Components.StateMachines
                 When(PaymentNotAuthorized)
                     .TransitionTo(Faulted));
 
+            //CompositeEvent(() => PaymentReady, x => x.ReadyEventStatus, PaymentCaptured, PaymentAuthorized);
 
-            CompositeEvent(() => PaymentReady, x => x.ReadyEventStatus, PaymentCaptured, PaymentAuthorized);
+            //DuringAny(
+            //    When(PaymentReady)
+            //        .Then(context =>
+            //        {
+            //            context.Publish<PaymentCompleted>(new
+            //            {
+            //                context.Saga.PaymentCardNumber
+            //            });
+            //            _logger.LogInformation("Order Ready: {0}", context.Saga.CorrelationId);
+            //        }));
 
             DuringAny(
-            When(PaymentReady)
-                .Then(context => {
-                    context.CreateConsumeContext().Publish<PaymentCompleted>(new {
-                        context.Instance.PaymentCardNumber
-                    });
-                    _logger.LogInformation("Order Ready: {0}", context.Instance.CorrelationId);
-                }));
-
-
-
-              DuringAny(
                 When(PaymentStatusRequested)
                     .RespondAsync(x => x.Init<PaymentStatus>(new
                     {
-                        OrderId = x.Instance.CorrelationId,
-                        CustomerNumber = x.Instance.CustomerNumber,
-                        Status = x.Instance.CurrentState,
+                        OrderId = x.Saga.CorrelationId,
+                        CustomerNumber = x.Saga.CustomerNumber,
+                        Status = x.Saga.CurrentState,
+                        ReadyStatus = x.Saga.ReadyEventStatus
                     }))
                 );
 
@@ -142,6 +157,6 @@ namespace Genocs.MassTransit.Components.StateMachines
 
         public Event<PaymentStatus> PaymentStatusRequested { get; private set; }
 
-        public Event PaymentReady { get; private set; }
+        //public Event PaymentReady { get; private set; }
     }
 }

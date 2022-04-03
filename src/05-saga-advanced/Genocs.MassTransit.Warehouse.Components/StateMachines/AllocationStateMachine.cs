@@ -1,5 +1,4 @@
-﻿using Automatonymous;
-using Genocs.MassTransit.Warehouse.Contracts;
+﻿using Genocs.MassTransit.Warehouse.Contracts;
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using System;

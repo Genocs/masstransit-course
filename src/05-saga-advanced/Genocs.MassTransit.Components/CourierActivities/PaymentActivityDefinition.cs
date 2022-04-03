@@ -1,4 +1,4 @@
-﻿using MassTransit.Definition;
+﻿using MassTransit;
 
 namespace Genocs.MassTransit.Components.CourierActivities
 {

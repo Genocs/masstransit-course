@@ -12,6 +12,7 @@ namespace Genocs.MassTransit.Contracts
         Guid OrderId { get; }
         string CustomerNumber { get; }
         string Status { get; }
+        int ReadyStatus { get; }
     }
 
     public interface PaymentNotFound
