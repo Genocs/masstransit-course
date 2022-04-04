@@ -46,9 +46,6 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
                 .RedisRepository();
 
             cfg.UsingRabbitMq(ConfigureBus);
-
-            // Request client configuration
-            //cfg.AddRequestClient<AllocateInventory>();
         });
 
         services.AddHostedService<MassTransitConsoleHostedService>();
@@ -68,8 +65,6 @@ Log.CloseAndFlush();
 static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator configurator)
 {
     //configurator.UseMessageData(new MongoDbMessageDataRepository("mongodb://127.0.0.1", "attachments"));
-
-
 
     //configurator.ReceiveEndpoint(KebabCaseEndpointNameFormatter.Instance.Consumer<RoutingSlipBatchEventConsumer>(), e =>
     //{

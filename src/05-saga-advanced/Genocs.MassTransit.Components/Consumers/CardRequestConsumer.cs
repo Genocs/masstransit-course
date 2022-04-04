@@ -54,12 +54,12 @@ namespace Genocs.MassTransit.Components.Consumers
 
             if (context.RequestId != null)
             {
-                await context.RespondAsync<OrderAccepted>(new
-                {
-                    InVar.Timestamp,
-                    context.Message.OrderId,
-                    context.Message.CustomerNumber
-                });
+                //await context.RespondAsync<OrderAccepted>(new
+                //{
+                //    InVar.Timestamp,
+                //    context.Message.OrderId,
+                //    context.Message.CustomerNumber
+                //});
             }
         }
     }

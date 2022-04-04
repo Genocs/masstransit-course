@@ -57,6 +57,8 @@ builder.Services.AddMassTransit(x =>
 
     x.AddRequestClient<OrderStatus>();
     x.AddRequestClient<PaymentStatus>();
+    x.AddRequestClient<PaymentRequest>();
+
 });
 
 

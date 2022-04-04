@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace Genocs.MassTransit.Components.StateMachines.Activities
 {
-    public class AcceptOrderActivity :
-        IStateMachineActivity<OrderState, OrderAccepted>
+    public class CardRequestedActivity :
+        IStateMachineActivity<OrderState, CardRequested>
     {
 
-        private readonly ILogger<AcceptOrderActivity> _logger;
+        private readonly ILogger<CardRequestedActivity> _logger;
 
-        public AcceptOrderActivity(ILogger<AcceptOrderActivity> logger)
+        public CardRequestedActivity(ILogger<CardRequestedActivity> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Probe(ProbeContext context)
         {
-            context.CreateScope("accept-order");
+            context.CreateScope("card-request");
         }
 
         public void Accept(StateMachineVisitor visitor)
@@ -27,10 +27,9 @@ namespace Genocs.MassTransit.Components.StateMachines.Activities
             visitor.Visit(this);
         }
 
-
-        public async Task Execute(BehaviorContext<OrderState, OrderAccepted> context, IBehavior<OrderState, OrderAccepted> next)
+        public async Task Execute(BehaviorContext<OrderState, CardRequested> context, IBehavior<OrderState, CardRequested> next)
         {
-            _logger.LogInformation("Executing, AcceptOrderActivity. Order is {0}", context.Message.OrderId);
+            _logger.LogInformation("Executing, CardRequestedActivity. Order is {0}", context.Message.OrderId);
 
             var consumeContext = context.GetPayload<ConsumeContext>();
 
@@ -46,7 +45,7 @@ namespace Genocs.MassTransit.Components.StateMachines.Activities
             await next.Execute(context).ConfigureAwait(false);
         }
 
-        public Task Faulted<TException>(BehaviorExceptionContext<OrderState, OrderAccepted, TException> context, IBehavior<OrderState, OrderAccepted> next) where TException : Exception
+        public Task Faulted<TException>(BehaviorExceptionContext<OrderState, CardRequested, TException> context, IBehavior<OrderState, CardRequested> next) where TException : Exception
         {
             return next.Faulted(context);
         }

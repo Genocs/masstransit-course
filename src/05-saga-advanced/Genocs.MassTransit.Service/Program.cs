@@ -39,7 +39,7 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
         _module.Initialize(configuration);
 
         // This is a state machine Activity
-        services.AddScoped<AcceptOrderActivity>();
+        services.AddScoped<CardRequestedActivity>();
 
         //services.AddScoped<RoutingSlipBatchEventConsumer>();
 
@@ -61,7 +61,8 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
             cfg.UsingRabbitMq(ConfigureBus);
 
             // Request client configuration
-            cfg.AddRequestClient<AllocateInventory>();
+            cfg.AddRequestClient<AllocateInventory>(new Uri($"queue:Genocs.MassTransit.Warehouse.Contracts:AllocateInventory"));
+
         });
 
         services.AddHostedService<MassTransitConsoleHostedService>();

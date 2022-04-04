@@ -20,7 +20,6 @@ namespace Genocs.MassTransit.Components.StateMachines
             // *****************************
             // Event Section
             Event(() => CardRequested, x => x.CorrelateById(m => m.Message.OrderId));
-            Event(() => OrderAccepted, x => x.CorrelateById(m => m.Message.OrderId));
 
             Event(() => FulfillmentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
@@ -58,31 +57,26 @@ namespace Genocs.MassTransit.Components.StateMachines
                 When(CardRequested)
                     .Then(context =>
                     {
-                        _logger.Log(LogLevel.Debug, "CardRequested: {CustomerNumber}", context.Data.CustomerNumber);
-                        context.Instance.CustomerNumber = context.Data.CustomerNumber;
-                        context.Instance.PaymentCardNumber = context.Data.PaymentCardNumber;
-                        context.Instance.LastUpdate = DateTime.UtcNow;
+                        _logger.Log(LogLevel.Debug, "CardRequested: {CustomerNumber}", context.Message.CustomerNumber);
+                        context.Saga.CustomerNumber = context.Message.CustomerNumber;
+                        context.Saga.PaymentCardNumber = context.Message.PaymentCardNumber;
+                        context.Saga.LastUpdate = DateTime.UtcNow;
                     })
-                    .TransitionTo(Submitted)
+                    .Activity(x => x.OfType<CardRequestedActivity>())
+                    .TransitionTo(Accepted)
 
                 );
-
-            During(Submitted,
-                Ignore(CardRequested),
-                When(OrderAccepted)
-                    .Activity(x => x.OfType<AcceptOrderActivity>())
-                    .TransitionTo(Accepted));
 
 
             During(Accepted,
                 When(FulfillmentFaulted)
-                    .Then(context => _logger.Log(LogLevel.Debug, "FulfillmentFaulted: {OrderId}", context.Data.OrderId))
+                    .Then(context => _logger.Log(LogLevel.Debug, "FulfillmentFaulted: {OrderId}", context.Message.OrderId))
                     .TransitionTo(Faulted),
                 When(FulfillOrderFaulted)
-                    .Then(context => _logger.Log(LogLevel.Error, "Fulfill Order Faulted: {0}", context.Data.Exceptions.FirstOrDefault()?.Message))
+                    .Then(context => _logger.Log(LogLevel.Error, "Fulfill Order Faulted: {0}", context.Message.Exceptions.FirstOrDefault()?.Message))
                     .TransitionTo(Faulted),
                 When(FulfillmentCompleted)
-                    .Then(context => _logger.Log(LogLevel.Debug, "FulfillmentCompleted: {OrderId}", context.Data.OrderId))
+                    .Then(context => _logger.Log(LogLevel.Debug, "FulfillmentCompleted: {OrderId}", context.Message.OrderId))
                     .TransitionTo(Completed)
                     .Finalize());
 
@@ -90,9 +84,9 @@ namespace Genocs.MassTransit.Components.StateMachines
                 When(OrderStatusRequested)
                     .RespondAsync(x => x.Init<OrderStatus>(new
                     {
-                        OrderId = x.Instance.CorrelationId,
-                        CustomerNumber = x.Instance.CustomerNumber,
-                        Status = x.Instance.CurrentState,
+                        OrderId = x.Saga.CorrelationId,
+                        CustomerNumber = x.Saga.CustomerNumber,
+                        Status = x.Saga.CurrentState,
                     }))
                 );
 
@@ -108,8 +102,6 @@ namespace Genocs.MassTransit.Components.StateMachines
         public State Faulted { get; private set; }
 
         public Event<CardRequested> CardRequested { get; private set; }
-        public Event<OrderAccepted> OrderAccepted { get; private set; }
-
         public Event<CustomerAccountClosed> AccountClosed { get; private set; }
 
         public Event<OrderFulfillmentCompleted> FulfillmentCompleted { get; private set; }

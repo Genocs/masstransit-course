@@ -62,20 +62,6 @@ namespace Genocs.MassTransit.WebApi.Controllers
 
             return Ok(orderId);
         }
-
-        [HttpPut(Name = "")]
-        public async Task<IActionResult> Put(Guid orderId)
-        {
-            var interfaceType = typeof(OrderAccepted);
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:OrderAccepted"));
-
-            await endpoint.Send<OrderAccepted>(new
-            {
-                OrderId = orderId,
-                InVar.Timestamp
-            });
-            return Ok(orderId);
-        }
             
     }
 }

@@ -11,19 +11,19 @@ namespace Genocs.MassTransit.Components.CourierActivities
 
         public async Task<ExecutionResult> Execute(ExecuteContext<IssueCardArguments> context)
         {
-            string cardNumber = context.Arguments.CardNumber;
-            if (string.IsNullOrEmpty(cardNumber))
-                throw new ArgumentNullException(nameof(cardNumber));
+            string cardCurrency = context.Arguments.Currency;
+            if (string.IsNullOrEmpty(cardCurrency))
+                throw new ArgumentNullException(nameof(cardCurrency));
 
             await Task.Delay(1000);
             await Task.Delay(_random.Next(10000));
 
-            if (cardNumber.StartsWith("5999"))
+            if (cardCurrency.StartsWith("USD"))
             {
-                throw new InvalidOperationException("The card number was invalid");
+                throw new InvalidOperationException("USD currency is not handled. please use EUR");
             }
 
-            return context.Completed(new { AuthorizationCode = "77777" });
+            return context.Completed(new { AuthorizationCode = "99999999" });
         }
 
         public async Task<CompensationResult> Compensate(CompensateContext<IssueCardLog> context)

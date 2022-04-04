@@ -1,6 +1,5 @@
 ﻿using Genocs.MassTransit.Warehouse.Contracts;
 using MassTransit;
-using MassTransit.Courier;
 using System;
 using System.Threading.Tasks;
 

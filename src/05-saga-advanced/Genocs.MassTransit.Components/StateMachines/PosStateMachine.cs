@@ -17,7 +17,6 @@ namespace Genocs.MassTransit.Components.StateMachines
             // *****************************
             // Event Section
             Event(() => PaymentRequested, x => x.CorrelateById(m => m.Message.OrderId));
-            Event(() => PaymentAccepted, x => x.CorrelateById(m => m.Message.OrderId));
 
             Event(() => PaymentInProgress, x => x.CorrelateById(m => m.Message.OrderId));
 
@@ -26,6 +25,8 @@ namespace Genocs.MassTransit.Components.StateMachines
 
             Event(() => PaymentNotCaptured, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => PaymentNotAuthorized, x => x.CorrelateById(m => m.Message.OrderId));
+
+            Event(() => PaymentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
 
             Event(() => PaymentStatusRequested, x =>
             {
@@ -56,14 +57,9 @@ namespace Genocs.MassTransit.Components.StateMachines
                         context.Saga.PaymentCardNumber = context.Message.PaymentCardNumber;
                         context.Saga.LastUpdate = DateTime.UtcNow;
                     })
-                    .TransitionTo(Submitted)
+                    .TransitionTo(Accepted)
                 );
 
-            During(Submitted,
-                Ignore(PaymentRequested),
-                When(PaymentAccepted)
-                    //.Activity(x => x.OfType<AcceptOrderActivity>())
-                    .TransitionTo(Accepted));
 
             During(Accepted,
                 When(PaymentInProgress)
@@ -94,8 +90,7 @@ namespace Genocs.MassTransit.Components.StateMachines
                          {
                              context.Saga.PaymentCardNumber
                          });
-                     })
-                     .TransitionTo(Completed));
+                     }));
 
             During(InProgress,
                 When(PaymentCaptured)
@@ -120,6 +115,7 @@ namespace Genocs.MassTransit.Components.StateMachines
             //            _logger.LogInformation("Order Ready: {0}", context.Saga.CorrelationId);
             //        }));
 
+
             DuringAny(
                 When(PaymentStatusRequested)
                     .RespondAsync(x => x.Init<PaymentStatus>(new
@@ -135,7 +131,6 @@ namespace Genocs.MassTransit.Components.StateMachines
 
         }
 
-        public State Submitted { get; private set; }
         public State Accepted { get; private set; }
 
         public State InProgress { get; private set; }
@@ -146,8 +141,6 @@ namespace Genocs.MassTransit.Components.StateMachines
         public State Faulted { get; private set; }
 
         public Event<PaymentRequested> PaymentRequested { get; private set; }
-        public Event<PaymentAccepted> PaymentAccepted { get; private set; }
-
         public Event<PaymentProgress> PaymentInProgress { get; private set; }
         public Event<PaymentCaptured> PaymentCaptured{ get; private set; }
         public Event<PaymentAuthorized> PaymentAuthorized { get; private set; }
@@ -156,6 +149,8 @@ namespace Genocs.MassTransit.Components.StateMachines
         public Event<PaymentNotAuthorized> PaymentNotAuthorized { get; private set; }
 
         public Event<PaymentStatus> PaymentStatusRequested { get; private set; }
+        public Event<PaymentCompleted> PaymentCompleted { get; private set; }
+
 
         //public Event PaymentReady { get; private set; }
     }

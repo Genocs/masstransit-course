@@ -29,7 +29,7 @@ namespace Genocs.MassTransit.Components.Consumers
                 });
 
             // Activity Number TWO PaymentActivity
-            builder.AddActivity("PaymentActivity", new Uri("queue:payment_execute"),
+            builder.AddActivity("Payment", new Uri("queue:payment_execute"),
                 new
                 {
                     CardNumber = context.Message.PaymentCardNumber ?? "5999-1234-5678-9012",
@@ -37,7 +37,7 @@ namespace Genocs.MassTransit.Components.Consumers
                 });
 
             // Activity Number THREE PaymentActivity
-            builder.AddActivity("CardIssuingActivity", new Uri("queue:card-issuing_execute"),
+            builder.AddActivity("IssueCard", new Uri("queue:issue-card_execute"),
                 new
                 {
                     Currency = context.Message.Currency ?? "EUR",

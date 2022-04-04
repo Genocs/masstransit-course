@@ -34,5 +34,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Genocs.MassTransit.Components\Genocs.MassTransit.Components.csproj" />
 		<ProjectReference Include="..\Genocs.MassTransit.Contracts\Genocs.MassTransit.Contracts.csproj" />
+		<ProjectReference Include="..\Genocs.MassTransit.Warehouse.Components\Genocs.MassTransit.Warehouse.Components.csproj" />
 	</ItemGroup>
 </Project>

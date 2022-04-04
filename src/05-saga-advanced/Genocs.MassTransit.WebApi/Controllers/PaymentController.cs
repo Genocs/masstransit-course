@@ -13,14 +13,17 @@ namespace Genocs.MassTransit.WebApi.Controllers
         private readonly ISendEndpointProvider _sendEndpointProvider;
 
         private readonly IRequestClient<PaymentStatus> _checkPaymentClient;
+        private readonly IRequestClient<PaymentRequest> _paymentRequestClient;
 
         public PaymentController(ILogger<PaymentController> logger,
             ISendEndpointProvider sendEndpointProvider,
-            IRequestClient<PaymentStatus> checkPaymentClient)
+            IRequestClient<PaymentStatus> checkPaymentClient,
+            IRequestClient<PaymentRequest> paymentRequestClient)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _sendEndpointProvider = sendEndpointProvider ?? throw new ArgumentNullException(nameof(sendEndpointProvider));
             _checkPaymentClient = checkPaymentClient ?? throw new ArgumentNullException(nameof(checkPaymentClient));
+            _paymentRequestClient = paymentRequestClient ?? throw new ArgumentNullException(nameof(paymentRequestClient));
         }
 
 
@@ -47,8 +50,6 @@ namespace Genocs.MassTransit.WebApi.Controllers
         [HttpPost(Name = "Submit")]
         public async Task<IActionResult> Post(Guid orderId, string customerNumber, string paymentCardNumber)
         {
-            //Genocs.MassTransit.Contracts:OrderSubmitted
-
             var interfaceType = typeof(PaymentRequest);
             var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentRequest"));
 
@@ -60,20 +61,6 @@ namespace Genocs.MassTransit.WebApi.Controllers
                 PaymentCardNumber = paymentCardNumber
             });
 
-            return Ok(orderId);
-        }
-
-        [HttpPut("Accept")]
-        public async Task<IActionResult> Put(Guid orderId)
-        {
-            var interfaceType = typeof(PaymentAccepted);
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentAccepted"));
-
-            await endpoint.Send<PaymentAccepted>(new
-            {
-                OrderId = orderId,
-                InVar.Timestamp
-            });
             return Ok(orderId);
         }
 
