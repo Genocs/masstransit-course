@@ -16,25 +16,27 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
+IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
+
+        // TODO: Handle in a separate module
+        // Azure Application Insight Setup
         _module = new DependencyTrackingTelemetryModule();
         _module.IncludeDiagnosticSourceActivities.Add("MassTransit");
 
         TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
+
+        // TODO: Handle with reading data from configuration file 
         configuration.InstrumentationKey = "6b4c6c82-3250-4170-97d3-245ee1449278";
         configuration.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer());
 
         _telemetryClient = new TelemetryClient(configuration);
 
         _module.Initialize(configuration);
-
+        // Azure Application Insight Setup - END
 
         services.AddHostedService<ConsoleHostedService>();
-
-
-
     })
     .ConfigureLogging((hostingContext, logging) =>
     {

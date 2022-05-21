@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="8.0.1" />
-    <PackageReference Include="MongoDB.Bson" Version="2.15.0" />
+    <PackageReference Include="MassTransit" Version="8.0.2" />
+    <PackageReference Include="MongoDB.Bson" Version="2.15.1" />
   </ItemGroup>
 
   <ItemGroup>

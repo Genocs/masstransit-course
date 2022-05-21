@@ -1,24 +1,22 @@
-﻿namespace Genocs.MassTransit.Integrations.Service
+﻿namespace Genocs.MassTransit.Integrations.Service;
+
+public class ConsoleHostedService : IHostedService
 {
-    public class ConsoleHostedService :
-        IHostedService
+
+    public ConsoleHostedService()
     {
+        // _bus = bus;
+    }
 
-        public ConsoleHostedService()
-        {
-            //            _bus = bus;
-        }
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        await Task.CompletedTask;
+        //  await _bus.StartAsync(cancellationToken).ConfigureAwait(false);
+    }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
-        {
-            await Task.CompletedTask;
-            //            await _bus.StartAsync(cancellationToken).ConfigureAwait(false);
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-            //           return _bus.StopAsync(cancellationToken);
-        }
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+        //  return _bus.StopAsync(cancellationToken);
     }
 }
