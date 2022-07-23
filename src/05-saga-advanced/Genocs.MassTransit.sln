@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Payment", "Payment", "{3FEF
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Promotion", "Promotion", "{6B8E7A3E-C348-4ADE-9357-C35F8D34B01D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DC2A2EEB-DFFA-490C-A717-0ACC7A75E787}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
