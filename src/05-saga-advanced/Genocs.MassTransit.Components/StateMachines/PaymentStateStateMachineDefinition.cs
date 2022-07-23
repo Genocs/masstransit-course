@@ -2,14 +2,14 @@
 
 namespace Genocs.MassTransit.Components.StateMachines
 {
-    public class PosStateMachineDefinition : SagaDefinition<PosState>
+    public class PaymentStateStateMachineDefinition : SagaDefinition<PaymentState>
     {
-        public PosStateMachineDefinition()
+        public PaymentStateStateMachineDefinition()
         {
             ConcurrentMessageLimit = 10;
         }
 
-        protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<PosState> sagaConfigurator)
+        protected override void ConfigureSaga(IReceiveEndpointConfigurator endpointConfigurator, ISagaConfigurator<PaymentState> sagaConfigurator)
         {
             endpointConfigurator.UseMessageRetry(r => r.Intervals(500, 1000, 10000));
             base.ConfigureSaga(endpointConfigurator, sagaConfigurator);

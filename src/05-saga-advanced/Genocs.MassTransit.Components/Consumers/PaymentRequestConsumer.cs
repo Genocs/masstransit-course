@@ -21,7 +21,7 @@ namespace Genocs.MassTransit.Components.Consumers
 
         public async Task Consume(ConsumeContext<PaymentRequest> context)
         {
-            _logger?.Log(LogLevel.Debug, "SubmitOrderConsumer: {CustomerNumber}", context.Message.CustomerNumber);
+            _logger?.Log(LogLevel.Debug, "SubmitOrderConsumer: {PaymentCardNumber}", context.Message.PaymentCardNumber);
 
             // Customer Validation
             if (context.RequestId != null)
@@ -29,18 +29,18 @@ namespace Genocs.MassTransit.Components.Consumers
                 await context.RespondAsync<PaymentRejected>(new
                 {
                     InVar.Timestamp,
-                    context.Message.OrderId,
-                    context.Message.CustomerNumber,
-                    Reason = $"Inactive customer cannot request card. CustomerNumber: {context.Message.CustomerNumber}"
+                    context.Message.PaymentOrderId,
+                    context.Message.PaymentCardNumber,
+                    Reason = $"Inactive customer cannot request order. PaymentCardNumber: {context.Message.PaymentCardNumber}"
                 });
             }
 
             await context.Publish<PaymentRequested>(new
             {
+                context.Message.PaymentOrderId,
                 context.Message.OrderId,
-                context.Message.Timestamp,
                 context.Message.CustomerNumber,
-                context.Message.PaymentCardNumber,
+                context.Message.Timestamp,
             });
 
             if (context.RequestId != null)
@@ -49,7 +49,7 @@ namespace Genocs.MassTransit.Components.Consumers
                 //{
                 //    InVar.Timestamp,
                 //    context.Message.OrderId,
-                //    context.Message.CustomerNumber
+                //    context.Message.PaymentCardNumber
                 //});
             }
         }

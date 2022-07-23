@@ -1,5 +1,4 @@
-﻿using Automatonymous;
-using Genocs.MassTransit.Components.StateMachines.Activities;
+﻿using Genocs.MassTransit.Components.StateMachines.Activities;
 using Genocs.MassTransit.Contracts;
 using MassTransit;
 using Microsoft.Extensions.Logging;
@@ -19,7 +18,7 @@ namespace Genocs.MassTransit.Components.StateMachines
 
             // *****************************
             // Event Section
-            Event(() => CardRequested, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => OrderRequested, x => x.CorrelateById(m => m.Message.OrderId));
 
             Event(() => FulfillmentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
             Event(() => FulfillmentFaulted, x => x.CorrelateById(m => m.Message.OrderId));
@@ -54,15 +53,15 @@ namespace Genocs.MassTransit.Components.StateMachines
             // *****************************
             // State Machine Section
             Initially(
-                When(CardRequested)
+                When(OrderRequested)
                     .Then(context =>
                     {
-                        _logger.Log(LogLevel.Debug, "CardRequested: {CustomerNumber}", context.Message.CustomerNumber);
+                        _logger.Log(LogLevel.Debug, "OrderRequested: {CustomerNumber}", context.Message.CustomerNumber);
                         context.Saga.CustomerNumber = context.Message.CustomerNumber;
                         context.Saga.PaymentCardNumber = context.Message.PaymentCardNumber;
                         context.Saga.LastUpdate = DateTime.UtcNow;
                     })
-                    .Activity(x => x.OfType<CardRequestedActivity>())
+                    .Activity(x => x.OfType<OrderRequestedActivity>())
                     .TransitionTo(Accepted)
 
                 );
@@ -101,7 +100,7 @@ namespace Genocs.MassTransit.Components.StateMachines
         public State Completed { get; private set; }
         public State Faulted { get; private set; }
 
-        public Event<CardRequested> CardRequested { get; private set; }
+        public Event<OrderRequested> OrderRequested { get; private set; }
         public Event<CustomerAccountClosed> AccountClosed { get; private set; }
 
         public Event<OrderFulfillmentCompleted> FulfillmentCompleted { get; private set; }

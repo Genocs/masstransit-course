@@ -6,23 +6,23 @@ using System.Threading.Tasks;
 
 namespace Genocs.MassTransit.Components.Consumers
 {
-    public class CardRequestConsumer :
-        IConsumer<CardRequest>
+    public class OrderRequestConsumer :
+        IConsumer<OrderRequest>
     {
-        readonly ILogger<CardRequestConsumer> _logger;
+        readonly ILogger<OrderRequestConsumer> _logger;
         private readonly CustomerClient customerClient;
 
-        public CardRequestConsumer()
+        public OrderRequestConsumer()
         {
         }
 
-        public CardRequestConsumer(ILogger<CardRequestConsumer> logger, CustomerClient customerClient)
+        public OrderRequestConsumer(ILogger<OrderRequestConsumer> logger, CustomerClient customerClient)
         {
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
             this.customerClient = customerClient ?? throw new System.ArgumentNullException(nameof(customerClient));
         }
 
-        public async Task Consume(ConsumeContext<CardRequest> context)
+        public async Task Consume(ConsumeContext<OrderRequest> context)
         {
             _logger?.Log(LogLevel.Debug, "SubmitOrderConsumer: {CustomerNumber}", context.Message.CustomerNumber);
 
@@ -37,14 +37,14 @@ namespace Genocs.MassTransit.Components.Consumers
                         InVar.Timestamp,
                         context.Message.OrderId,
                         context.Message.CustomerNumber,
-                        Reason = $"Inactive customer cannot request card. CustomerNumber: {context.Message.CustomerNumber}"
+                        Reason = $"Inactive customer cannot request order. CustomerNumber: {context.Message.CustomerNumber}"
                     });
                 }
 
                 return;
             }
 
-            await context.Publish<CardRequested>(new
+            await context.Publish<OrderRequested>(new
             {
                 context.Message.OrderId,
                 context.Message.Timestamp,

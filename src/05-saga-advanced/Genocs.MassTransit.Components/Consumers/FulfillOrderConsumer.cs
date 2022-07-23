@@ -1,6 +1,5 @@
 ﻿using Genocs.MassTransit.Contracts;
 using MassTransit;
-using MassTransit.Courier;
 using MassTransit.Courier.Contracts;
 using System;
 using System.Threading.Tasks;
@@ -22,14 +21,15 @@ namespace Genocs.MassTransit.Components.Consumers
             // Add the activities for the Routing slip Consumer
 
             // Activity Number ONE AllocatePromotion
-            builder.AddActivity("AllocateInventory", new Uri("queue:allocate-inventory_execute"), new
+            //{ KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}
+            builder.AddActivity("AllocateInventory", new Uri("exchange:allocate-inventory_execute"), new
                 {
                     ItemNumber = "ITEM123",
                     Quantity = 10.0m
                 });
 
             // Activity Number TWO PaymentActivity
-            builder.AddActivity("Payment", new Uri("queue:payment_execute"),
+            builder.AddActivity("Payment", new Uri("exchange:payment_execute"),
                 new
                 {
                     CardNumber = context.Message.PaymentCardNumber ?? "5999-1234-5678-9012",
@@ -37,7 +37,7 @@ namespace Genocs.MassTransit.Components.Consumers
                 });
 
             // Activity Number THREE PaymentActivity
-            builder.AddActivity("IssueCard", new Uri("queue:issue-card_execute"),
+            builder.AddActivity("DeliveryOrder", new Uri("exchange:delivery-order_execute"),
                 new
                 {
                     Currency = context.Message.Currency ?? "EUR",

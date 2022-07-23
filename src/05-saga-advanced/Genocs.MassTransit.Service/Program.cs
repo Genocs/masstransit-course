@@ -39,7 +39,7 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
         _module.Initialize(configuration);
 
         // This is a state machine Activity
-        services.AddScoped<CardRequestedActivity>();
+        services.AddScoped<OrderRequestedActivity>();
 
         //services.AddScoped<RoutingSlipBatchEventConsumer>();
 
@@ -52,16 +52,19 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
             // Routing slip configuration
             cfg.AddActivitiesFromNamespaceContaining<AllocateInventoryActivity>();
 
+            // Saga handling Order state
             cfg.AddSagaStateMachine<OrderStateMachine, OrderState>(typeof(OrderStateMachineDefinition))
                 .RedisRepository();
 
-            cfg.AddSagaStateMachine<PosStateMachine, PosState>(typeof(PosStateMachineDefinition))
+            // Saga handling Payment state
+            cfg.AddSagaStateMachine<PaymentStateStateMachine, PaymentState>(typeof(PaymentStateStateMachineDefinition))
                 .RedisRepository();
 
             cfg.UsingRabbitMq(ConfigureBus);
 
             // Request client configuration
-            cfg.AddRequestClient<AllocateInventory>(new Uri($"queue:Genocs.MassTransit.Warehouse.Contracts:AllocateInventory"));
+            //{ KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}
+            cfg.AddRequestClient<AllocateInventory>(new Uri($"exchange:Genocs.MassTransit.Warehouse.Contracts:AllocateInventory"));
 
         });
 
@@ -86,8 +89,6 @@ Log.CloseAndFlush();
 static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator configurator)
 {
     //configurator.UseMessageData(new MongoDbMessageDataRepository("mongodb://127.0.0.1", "attachments"));
-
-
 
     //configurator.ReceiveEndpoint(KebabCaseEndpointNameFormatter.Instance.Consumer<RoutingSlipBatchEventConsumer>(), e =>
     //{

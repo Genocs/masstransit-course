@@ -4,9 +4,9 @@ namespace Genocs.MassTransit.Contracts
 {
     public interface PaymentRejected
     {
-        Guid OrderId { get; }
-        DateTime Timestamp { get; }
-        string CustomerNumber { get; }
+        Guid PaymentOrderId { get; }
+        string PaymentCardNumber { get; }
         string Reason { get; }
+        DateTime Timestamp { get; }
     }
 }

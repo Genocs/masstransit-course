@@ -21,8 +21,8 @@ namespace Genocs.MassTransit.Components.Consumers
 
         public async Task Consume(ConsumeContext<PaymentCompleted> context)
         {
-            _logger?.Log(LogLevel.Debug, "PaymentCompleted: {CustomerNumber}", context.Message.CustomerNumber);
-
+            _logger?.Log(LogLevel.Debug, "PaymentCompleted: {PaymentCardNumber}", context.Message.PaymentCardNumber);
+           
             await Task.CompletedTask;
         }
     }

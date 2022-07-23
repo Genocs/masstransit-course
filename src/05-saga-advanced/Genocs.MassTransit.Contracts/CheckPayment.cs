@@ -4,12 +4,12 @@ namespace Genocs.MassTransit.Contracts
 {
     public interface CheckPayment
     {
-        Guid OrderId { get; }
+        Guid PaymentOrderId { get; }
     }
 
     public interface PaymentStatus
     {
-        Guid OrderId { get; }
+        Guid PaymentOrderId { get; }
         string CustomerNumber { get; }
         string Status { get; }
         int ReadyStatus { get; }
@@ -17,6 +17,6 @@ namespace Genocs.MassTransit.Contracts
 
     public interface PaymentNotFound
     {
-        Guid OrderId { get; }
+        Guid PaymentOrderId { get; }
     }
 }

@@ -5,37 +5,37 @@ using System;
 
 namespace Genocs.MassTransit.Components.StateMachines
 {
-    public class PosStateMachine : MassTransitStateMachine<PosState>
+    public class PaymentStateStateMachine : MassTransitStateMachine<PaymentState>
     {
 
-        readonly ILogger<PosStateMachine> _logger;
+        readonly ILogger<PaymentStateStateMachine> _logger;
 
-        public PosStateMachine(ILogger<PosStateMachine> logger)
+        public PaymentStateStateMachine(ILogger<PaymentStateStateMachine> logger)
         {
             _logger = logger;
 
             // *****************************
             // Event Section
-            Event(() => PaymentRequested, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => PaymentRequested, x => x.CorrelateById(m => m.Message.PaymentOrderId));
 
-            Event(() => PaymentInProgress, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => PaymentInProgress, x => x.CorrelateById(m => m.Message.PaymentOrderId));
 
-            Event(() => PaymentCaptured, x => x.CorrelateById(m => m.Message.OrderId));
-            Event(() => PaymentAuthorized, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => PaymentCaptured, x => x.CorrelateById(m => m.Message.PaymentOrderId));
+            Event(() => PaymentAuthorized, x => x.CorrelateById(m => m.Message.PaymentOrderId));
 
-            Event(() => PaymentNotCaptured, x => x.CorrelateById(m => m.Message.OrderId));
-            Event(() => PaymentNotAuthorized, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => PaymentNotCaptured, x => x.CorrelateById(m => m.Message.PaymentOrderId));
+            Event(() => PaymentNotAuthorized, x => x.CorrelateById(m => m.Message.PaymentOrderId));
 
-            Event(() => PaymentCompleted, x => x.CorrelateById(m => m.Message.OrderId));
+            Event(() => PaymentCompleted, x => x.CorrelateById(m => m.Message.PaymentOrderId));
 
             Event(() => PaymentStatusRequested, x =>
             {
-                x.CorrelateById(m => m.Message.OrderId);
+                x.CorrelateById(m => m.Message.PaymentOrderId);
                 x.OnMissingInstance(m => m.ExecuteAsync(async context =>
                 {
                     if (context.RequestId.HasValue)
                     {
-                        await context.RespondAsync<PaymentNotFound>(new { context.Message.OrderId });
+                        await context.RespondAsync<PaymentNotFound>(new { context.Message.PaymentOrderId });
                     }
                 }
                ));
@@ -54,6 +54,7 @@ namespace Genocs.MassTransit.Components.StateMachines
                     {
                         _logger.Log(LogLevel.Debug, "PaymentRequested: {CustomerNumber}", context.Message.CustomerNumber);
                         context.Saga.CustomerNumber = context.Message.CustomerNumber;
+                        context.Saga.OrderId = context.Message.OrderId;
                         context.Saga.PaymentCardNumber = context.Message.PaymentCardNumber;
                         context.Saga.LastUpdate = DateTime.UtcNow;
                     })
@@ -120,8 +121,8 @@ namespace Genocs.MassTransit.Components.StateMachines
                 When(PaymentStatusRequested)
                     .RespondAsync(x => x.Init<PaymentStatus>(new
                     {
-                        OrderId = x.Saga.CorrelationId,
-                        CustomerNumber = x.Saga.CustomerNumber,
+                        PaymentOrderId = x.Saga.CorrelationId,
+                        OrderId = x.Saga.CustomerNumber,
                         Status = x.Saga.CurrentState,
                         ReadyStatus = x.Saga.ReadyEventStatus
                     }))

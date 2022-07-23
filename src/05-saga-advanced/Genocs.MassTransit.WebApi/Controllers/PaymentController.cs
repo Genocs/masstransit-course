@@ -2,136 +2,145 @@ using Genocs.MassTransit.Contracts;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Genocs.MassTransit.WebApi.Controllers
+namespace Genocs.MassTransit.WebApi.Controllers;
+
+/// <summary>
+/// This Controller act as a payment system simulator
+/// </summary>
+[ApiController]
+[Route("[controller]")]
+public class PaymentController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class PaymentController : ControllerBase
+    private readonly ILogger<PaymentController> _logger;
+
+    private readonly ISendEndpointProvider _sendEndpointProvider;
+
+    private readonly IRequestClient<PaymentStatus> _checkPaymentClient;
+    private readonly IRequestClient<PaymentRequest> _paymentRequestClient;
+
+    public PaymentController(ILogger<PaymentController> logger,
+        ISendEndpointProvider sendEndpointProvider,
+        IRequestClient<PaymentStatus> checkPaymentClient,
+        IRequestClient<PaymentRequest> paymentRequestClient)
     {
-        private readonly ILogger<PaymentController> _logger;
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _sendEndpointProvider = sendEndpointProvider ?? throw new ArgumentNullException(nameof(sendEndpointProvider));
+        _checkPaymentClient = checkPaymentClient ?? throw new ArgumentNullException(nameof(checkPaymentClient));
+        _paymentRequestClient = paymentRequestClient ?? throw new ArgumentNullException(nameof(paymentRequestClient));
+    }
 
-        private readonly ISendEndpointProvider _sendEndpointProvider;
 
-        private readonly IRequestClient<PaymentStatus> _checkPaymentClient;
-        private readonly IRequestClient<PaymentRequest> _paymentRequestClient;
-
-        public PaymentController(ILogger<PaymentController> logger,
-            ISendEndpointProvider sendEndpointProvider,
-            IRequestClient<PaymentStatus> checkPaymentClient,
-            IRequestClient<PaymentRequest> paymentRequestClient)
+    [HttpGet(Name = "PaymentStatus")]
+    public async Task<IActionResult> Get(Guid paymentOrderId)
+    {
+        var (orderStatus, notFound) = await _checkPaymentClient.GetResponse<PaymentStatus, PaymentNotFound>(new
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _sendEndpointProvider = sendEndpointProvider ?? throw new ArgumentNullException(nameof(sendEndpointProvider));
-            _checkPaymentClient = checkPaymentClient ?? throw new ArgumentNullException(nameof(checkPaymentClient));
-            _paymentRequestClient = paymentRequestClient ?? throw new ArgumentNullException(nameof(paymentRequestClient));
-        }
+            paymentOrderId
+        });
 
-
-        [HttpGet(Name = "PaymentStatus")]
-        public async Task<IActionResult> Get(Guid orderId)
+        if (orderStatus.IsCompletedSuccessfully)
         {
-            var (orderStatus, notFound) = await _checkPaymentClient.GetResponse<PaymentStatus, PaymentNotFound>(new
-            {
-                orderId
-            });
-
-            if (orderStatus.IsCompletedSuccessfully)
-            {
-                var response = await orderStatus;
-                return Ok(response.Message);
-            }
-            else
-            {
-                var response = await notFound;
-                return NotFound(response.Message);
-            }
+            var response = await orderStatus;
+            return Ok(response.Message);
         }
-
-        [HttpPost(Name = "Submit")]
-        public async Task<IActionResult> Post(Guid orderId, string customerNumber, string paymentCardNumber)
+        else
         {
-            var interfaceType = typeof(PaymentRequest);
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentRequest"));
-
-            await endpoint.Send<PaymentRequest>(new
-            {
-                OrderId = orderId,
-                InVar.Timestamp,
-                CustomerNumber = customerNumber,
-                PaymentCardNumber = paymentCardNumber
-            });
-
-            return Ok(orderId);
+            var response = await notFound;
+            return NotFound(response.Message);
         }
+    }
 
-        [HttpPut("Progress")]
-        public async Task<IActionResult> PutProgress(Guid orderId)
+    [HttpPost(Name = "Submit")]
+    public async Task<IActionResult> Post(Guid paymentOrderId, Guid orderId, string customerNumber, string paymentCardNumber)
+    {
+        // var interfaceType = typeof(PaymentRequest);
+        // { KebabCaseEndpointNameFormatter.Instance.Consumer<PaymentRequest>()}
+        var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentRequest"));
+
+        await endpoint.Send<PaymentRequest>(new
         {
-            var interfaceType = typeof(PaymentProgress);
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentProgress"));
+            PaymentOrderId = paymentOrderId,
+            OrderId = orderId,
+            InVar.Timestamp,
+            CustomerNumber = customerNumber,
+            PaymentCardNumber = paymentCardNumber
+        });
 
-            await endpoint.Send<PaymentProgress>(new
-            {
-                OrderId = orderId,
-                InVar.Timestamp
-            });
-            return Ok(orderId);
-        }
+        return Ok(paymentOrderId);
+    }
 
-        [HttpPut("Captured")]
-        public async Task<IActionResult> PutCaptured(Guid orderId)
+    [HttpPut("Progress")]
+    public async Task<IActionResult> PutProgress(Guid paymentOrderId)
+    {
+        // var interfaceType = typeof(PaymentProgress);
+        // {KebabCaseEndpointNameFormatter.Instance.Consumer<PaymentProgress>()}
+        var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentProgress"));
+
+        await endpoint.Send<PaymentProgress>(new
         {
-            var interfaceType = typeof(PaymentCaptured);
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentCaptured"));
+            PaymentOrderId = paymentOrderId,
+            InVar.Timestamp
+        });
+        return Ok(paymentOrderId);
+    }
 
-            await endpoint.Send<PaymentCaptured>(new
-            {
-                OrderId = orderId,
-                InVar.Timestamp
-            });
-            return Ok(orderId);
-        }
+    [HttpPut("Captured")]
+    public async Task<IActionResult> PutCaptured(Guid paymentOrderId)
+    {
+        var interfaceType = typeof(PaymentCaptured);
+        // { KebabCaseEndpointNameFormatter.Instance.Consumer<PaymentCaptured>()}
+        var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentCaptured"));
 
-        [HttpPut("Authorized")]
-        public async Task<IActionResult> PutAuthorized(Guid orderId)
+        await endpoint.Send<PaymentCaptured>(new
         {
-            var interfaceType = typeof(PaymentAuthorized);
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentAuthorized"));
+            PaymentOrderId = paymentOrderId,
+            InVar.Timestamp
+        });
+        return Ok(paymentOrderId);
+    }
 
-            await endpoint.Send<PaymentAuthorized>(new
-            {
-                OrderId = orderId,
-                InVar.Timestamp
-            });
-            return Ok(orderId);
-        }
+    [HttpPut("Authorized")]
+    public async Task<IActionResult> PutAuthorized(Guid paymentOrderId)
+    {
+        var interfaceType = typeof(PaymentAuthorized);
+        // { KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}
+        var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentAuthorized"));
 
-        [HttpPut("NotCaptured")]
-        public async Task<IActionResult> PutNotCaptured(Guid orderId)
+        await endpoint.Send<PaymentAuthorized>(new
         {
-            var interfaceType = typeof(PaymentNotAuthorized);
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentNotAuthorized"));
+            PaymentOrderId = paymentOrderId,
+            InVar.Timestamp
+        });
+        return Ok(paymentOrderId);
+    }
 
-            await endpoint.Send<PaymentNotAuthorized>(new
-            {
-                OrderId = orderId,
-                InVar.Timestamp
-            });
-            return Ok(orderId);
-        }
+    [HttpPut("NotCaptured")]
+    public async Task<IActionResult> PutNotCaptured(Guid paymentOrderId)
+    {
+        var interfaceType = typeof(PaymentNotAuthorized);
+        // { KebabCaseEndpointNameFormatter.Instance.Consumer<PaymentNotAuthorized>()}
+        var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentNotAuthorized"));
 
-        [HttpPut("NotAuthorized")]
-        public async Task<IActionResult> PutNotAuthorized(Guid orderId)
+        await endpoint.Send<PaymentNotAuthorized>(new
         {
-            var interfaceType = typeof(PaymentNotAuthorized);
-            var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentNotAuthorized"));
+            PaymentOrderId = paymentOrderId,
+            InVar.Timestamp
+        });
+        return Ok(paymentOrderId);
+    }
 
-            await endpoint.Send<PaymentNotAuthorized>(new
-            {
-                OrderId = orderId,
-                InVar.Timestamp
-            });
-            return Ok(orderId);
-        }
+    [HttpPut("NotAuthorized")]
+    public async Task<IActionResult> PutNotAuthorized(Guid paymentOrderId)
+    {
+        var interfaceType = typeof(PaymentNotAuthorized);
+        // { KebabCaseEndpointNameFormatter.Instance.Consumer<PaymentNotAuthorized>()}
+        var endpoint = await _sendEndpointProvider.GetSendEndpoint(new Uri($"exchange:Genocs.MassTransit.Contracts:PaymentNotAuthorized"));
+
+        await endpoint.Send<PaymentNotAuthorized>(new
+        {
+            PaymentOrderId = paymentOrderId,
+            InVar.Timestamp
+        });
+        return Ok(paymentOrderId);
     }
 }
