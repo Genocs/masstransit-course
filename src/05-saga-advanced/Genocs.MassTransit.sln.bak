@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Issuer.Service", "Genocs.MassTransit.Issuer.Service\Genocs.MassTransit.Issuer.Service.csproj", "{FBF93F6E-28C8-484C-BE8E-34BDC63835B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Service", "Genocs.MassTransit.Service\Genocs.MassTransit.Service.csproj", "{FBF93F6E-28C8-484C-BE8E-34BDC63835B3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Issuer.WebApi", "Genocs.MassTransit.Issuer.WebApi\Genocs.MassTransit.Issuer.WebApi.csproj", "{1AA85237-7D41-4FEE-B404-A44BA8A269D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.WebApi", "Genocs.MassTransit.WebApi\Genocs.MassTransit.WebApi.csproj", "{1AA85237-7D41-4FEE-B404-A44BA8A269D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Issuer.Contracts", "Genocs.MassTransit.Issuer.Contracts\Genocs.MassTransit.Issuer.Contracts.csproj", "{4B8C149B-C1C6-4461-B5E5-3C8883729DB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Contracts", "Genocs.MassTransit.Contracts\Genocs.MassTransit.Contracts.csproj", "{4B8C149B-C1C6-4461-B5E5-3C8883729DB3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Issuer.Components", "Genocs.MassTransit.Issuer.Components\Genocs.MassTransit.Issuer.Components.csproj", "{CCF24FC1-8596-4331-9DB9-AD06855EA909}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Components", "Genocs.MassTransit.Components\Genocs.MassTransit.Components.csproj", "{CCF24FC1-8596-4331-9DB9-AD06855EA909}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Warehouse", "Warehouse", "{0DC1FB21-EECD-474F-82EC-D8ADDC515A0A}"
 EndProject
@@ -34,8 +34,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Promotion", "Promotion", "{6B8E7A3E-C348-4ADE-9357-C35F8D34B01D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DC2A2EEB-DFFA-490C-A717-0ACC7A75E787}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Issuer", "Issuer", "{A058B42B-9220-4A8F-BEFF-46915B6B69A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -88,10 +86,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{FBF93F6E-28C8-484C-BE8E-34BDC63835B3} = {A058B42B-9220-4A8F-BEFF-46915B6B69A3}
-		{1AA85237-7D41-4FEE-B404-A44BA8A269D7} = {A058B42B-9220-4A8F-BEFF-46915B6B69A3}
-		{4B8C149B-C1C6-4461-B5E5-3C8883729DB3} = {A058B42B-9220-4A8F-BEFF-46915B6B69A3}
-		{CCF24FC1-8596-4331-9DB9-AD06855EA909} = {A058B42B-9220-4A8F-BEFF-46915B6B69A3}
 		{20CEF728-503D-403C-8DF2-D728BDB2F132} = {0DC1FB21-EECD-474F-82EC-D8ADDC515A0A}
 		{6E4AA10C-CAAB-4C89-BBFE-4E7B5DBFEA58} = {0DC1FB21-EECD-474F-82EC-D8ADDC515A0A}
 		{0D2D0A46-B015-4686-A60E-E82D329C5232} = {0DC1FB21-EECD-474F-82EC-D8ADDC515A0A}

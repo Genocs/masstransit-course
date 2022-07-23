@@ -32,8 +32,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Genocs.MassTransit.Components\Genocs.MassTransit.Components.csproj" />
-		<ProjectReference Include="..\Genocs.MassTransit.Contracts\Genocs.MassTransit.Contracts.csproj" />
+		<ProjectReference Include="..\Genocs.MassTransit.Issuer.Components\Genocs.MassTransit.Issuer.Components.csproj" />
+		<ProjectReference Include="..\Genocs.MassTransit.Issuer.Contracts\Genocs.MassTransit.Issuer.Contracts.csproj" />
 		<ProjectReference Include="..\Genocs.MassTransit.Warehouse.Components\Genocs.MassTransit.Warehouse.Components.csproj" />
 	</ItemGroup>
 </Project>
