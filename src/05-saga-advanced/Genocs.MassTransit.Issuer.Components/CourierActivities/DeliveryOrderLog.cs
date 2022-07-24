@@ -2,7 +2,7 @@
 
 namespace Genocs.MassTransit.Components.CourierActivities
 {
-    public interface IssueCardLog
+    public interface DeliveryOrderLog
     {
         string AuthorizationCode { get; }
     }

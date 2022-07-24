@@ -19,9 +19,6 @@ namespace Genocs.MassTransit.Warehouse.Components.Consumers
                 HoldDuration = 15000,
             });
 
-            
-            //throw new InvalidOperationException("Non Va bene");
-
             // Respond to the client that the allocation went well 
             await context.RespondAsync<InventoryAllocated>(new
             {

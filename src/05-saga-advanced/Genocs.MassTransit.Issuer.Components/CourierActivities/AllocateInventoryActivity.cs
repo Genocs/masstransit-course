@@ -35,6 +35,8 @@ namespace Genocs.MassTransit.Components.CourierActivities
                 ItemNumber = itemNumber,
                 Quantity = quantity
             });
+            //throw new System.InvalidOperationException("Simulate error");
+
 
             return context.Completed(new { AllocationId = allocationId });
         }

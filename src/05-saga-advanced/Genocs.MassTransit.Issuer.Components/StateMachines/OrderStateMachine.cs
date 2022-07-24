@@ -40,12 +40,6 @@ namespace Genocs.MassTransit.Components.StateMachines
 
             Event(() => AccountClosed, x => x.CorrelateBy((saga, context) => saga.CustomerNumber == context.Message.CustomerNumber));
 
-            //Schedule(() => HoldExpiration, x => x.HoldDurationToken, s =>
-            //{
-            //    s.Delay = TimeSpan.FromHours(1);
-            //    s.Received = x => x.CorrelateById(m => m.Message.AllocationId);
-            //});
-
             // *****************************
             // State Section
             InstanceState(x => x.CurrentState);

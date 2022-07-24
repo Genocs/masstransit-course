@@ -2,10 +2,10 @@
 
 namespace Genocs.MassTransit.Warehouse.Components.StateMachines
 {
-    public class AllocateStateMachineDefinition :
+    public class AllocationStateMachineDefinition :
         SagaDefinition<AllocationState>
     {
-        public AllocateStateMachineDefinition()
+        public AllocationStateMachineDefinition()
         {
             ConcurrentMessageLimit = 10;
         }

@@ -15,8 +15,7 @@ namespace Genocs.MassTransit.Warehouse.Components.StateMachines
 
             Schedule(() => HoldExpiration, x => x.HoldDurationToken, s =>
             {
-                s.Delay = TimeSpan.FromHours(1);
-
+                s.Delay = TimeSpan.FromMinutes(5);
                 s.Received = x => x.CorrelateById(m => m.Message.AllocationId);
             });
 

@@ -2,9 +2,9 @@
 
 namespace Genocs.MassTransit.Components.CourierActivities
 {
-    public interface IssueCardArguments
+    public interface DeliveryOrderArguments
     {
         Guid OrderId { get; }
-        string Currency { get; }
+        string Address { get; }
     }
 }

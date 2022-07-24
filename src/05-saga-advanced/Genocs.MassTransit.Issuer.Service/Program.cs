@@ -63,7 +63,7 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
             cfg.UsingRabbitMq(ConfigureBus);
 
             // Request client configuration
-            //{ KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}
+            //{ KebabCaseEndpointNameFormatter.Instance.Consumer<AllocateInventory>()}
             cfg.AddRequestClient<AllocateInventory>(new Uri($"exchange:Genocs.MassTransit.Warehouse.Contracts:AllocateInventory"));
 
         });

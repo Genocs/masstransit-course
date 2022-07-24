@@ -20,7 +20,7 @@ namespace Genocs.MassTransit.Components.Consumers
 
             // Add the activities for the Routing slip Consumer
 
-            // Activity Number ONE AllocatePromotion
+            // 1. Allocate Inventory Activity
             //{ KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}
             builder.AddActivity("AllocateInventory", new Uri("exchange:allocate-inventory_execute"), new
                 {
@@ -28,7 +28,7 @@ namespace Genocs.MassTransit.Components.Consumers
                     Quantity = 10.0m
                 });
 
-            // Activity Number TWO PaymentActivity
+            // 2. Payment Activity
             builder.AddActivity("Payment", new Uri("exchange:payment_execute"),
                 new
                 {
@@ -36,7 +36,7 @@ namespace Genocs.MassTransit.Components.Consumers
                     Amount = 1.99m
                 });
 
-            // Activity Number THREE PaymentActivity
+            // 3. Delivery Order Activity
             builder.AddActivity("DeliveryOrder", new Uri("exchange:delivery-order_execute"),
                 new
                 {

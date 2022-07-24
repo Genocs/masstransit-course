@@ -10,7 +10,6 @@ namespace Genocs.MassTransit.Components.Consumers
         public Task Consume(ConsumeContext<Fault<FulfillOrder>> context)
         {
             return Task.CompletedTask;
-
         }
     }
 }

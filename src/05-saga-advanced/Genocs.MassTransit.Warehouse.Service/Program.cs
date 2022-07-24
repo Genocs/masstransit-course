@@ -42,7 +42,8 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
 
             // Routing slip configuration
 
-            cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>(typeof(AllocateStateMachineDefinition))
+            // Saga handling Allocation Inventory state
+            cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>(typeof(AllocationStateMachineDefinition))
                 .RedisRepository();
 
             cfg.UsingRabbitMq(ConfigureBus);
