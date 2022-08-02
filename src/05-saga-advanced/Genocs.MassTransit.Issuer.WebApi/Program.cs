@@ -1,6 +1,8 @@
 using Genocs.MassTransit.Contracts;
 using MassTransit;
+using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DependencyCollector;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
@@ -14,6 +16,8 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 
+TelemetryClient _telemetryClient;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseSerilog((ctx, lc) => lc
@@ -26,6 +30,12 @@ builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.ConfigureTelemetryModule<DependencyTrackingTelemetryModule>((module, o) =>
 {
     module.IncludeDiagnosticSourceActivities.Add("MassTransit");
+
+    TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
+    configuration.InstrumentationKey = "f28b8a8c-bf65-44a6-9976-e56613fef466";
+    configuration.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer());
+
+    _telemetryClient = new TelemetryClient(configuration);
 });
 // Azure Application Insight configuration - END
 // ***********************************************

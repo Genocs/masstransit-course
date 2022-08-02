@@ -27,7 +27,7 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
         _module.IncludeDiagnosticSourceActivities.Add("MassTransit");
 
         TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
-        configuration.InstrumentationKey = "6b4c6c82-3250-4170-97d3-245ee1449278";
+        configuration.InstrumentationKey = "f28b8a8c-bf65-44a6-9976-e56613fef466";
         configuration.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer());
 
         _telemetryClient = new TelemetryClient(configuration);
@@ -40,11 +40,20 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
             // Consumer configuration
             cfg.AddConsumersFromNamespaceContaining<AllocateInventoryConsumer>();
 
+            cfg.AddPublishMessageScheduler();
+
+            cfg.AddDelayedMessageScheduler();
+
             // Routing slip configuration
 
             // Saga handling Allocation Inventory state
             cfg.AddSagaStateMachine<AllocationStateMachine, AllocationState>(typeof(AllocationStateMachineDefinition))
-                .RedisRepository();
+                //.RedisRepository(); // Redis as Saga persistence
+                .MongoDbRepository(r =>
+                {
+                    r.Connection = "mongodb://127.0.0.1";
+                    r.DatabaseName = "allocation";
+                });
 
             cfg.UsingRabbitMq(ConfigureBus);
         });
@@ -81,7 +90,10 @@ static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryCon
     //});
 
     // This configuration allow to handle the Scheduling
-    configurator.UseMessageScheduler(new Uri("queue:quartz"));
+    //configurator.UseMessageScheduler(new Uri("queue:quartz"));
+
+    configurator.UseDelayedMessageScheduler();
+
 
     // This configuration will configure the Activity Definition
     configurator.ConfigureEndpoints(context);

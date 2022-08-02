@@ -25,6 +25,11 @@ namespace Genocs.MassTransit.Contracts
         /// </summary>
         string PaymentCardNumber { get; }
 
+        /// <summary>
+        /// Where the order will delivered 
+        /// </summary>
+        string ShippingAddress { get; }
+
         DateTime Timestamp { get; }
     }
 }

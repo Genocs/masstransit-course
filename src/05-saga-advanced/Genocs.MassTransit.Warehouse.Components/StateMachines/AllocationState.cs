@@ -8,13 +8,14 @@ namespace Genocs.MassTransit.Warehouse.Components.StateMachines
         SagaStateMachineInstance,
         ISagaVersion
     {
+        [BsonId]
+        public Guid CorrelationId { get; set; }
+
         public string? CurrentState { get; set; }
 
         public Guid? HoldDurationToken { get; set; }
 
         public int Version { get; set; }
 
-        [BsonId]
-        public Guid CorrelationId { get; set; }
     }
 }

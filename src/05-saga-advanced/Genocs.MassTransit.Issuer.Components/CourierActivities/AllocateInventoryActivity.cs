@@ -18,7 +18,7 @@ namespace Genocs.MassTransit.Components.CourierActivities
         public async Task<ExecutionResult> Execute(ExecuteContext<AllocateInventoryArguments> context)
         {
             var orderId = context.Arguments.OrderId;
-
+            // Some business logic checks
             var itemNumber = context.Arguments.ItemNumber;
             if (string.IsNullOrEmpty(itemNumber))
                 throw new ArgumentNullException(nameof(itemNumber));
@@ -27,8 +27,11 @@ namespace Genocs.MassTransit.Components.CourierActivities
             if (quantity <= 0.0m)
                 throw new ArgumentNullException(nameof(quantity));
 
+            // Create the allocation inventory Id
             var allocationId = NewId.NextGuid();
 
+            // Allocate the inventory
+            // The inventory remain allocated for 8 seconds
             var response = await _client.GetResponse<InventoryAllocated>(new
             {
                 AllocationId = allocationId,
@@ -37,7 +40,16 @@ namespace Genocs.MassTransit.Components.CourierActivities
             });
             //throw new System.InvalidOperationException("Simulate error");
 
+            // Delay above the 8 sec will create a hold Expiration
+            await Task.Delay(7000);
 
+            // Complete the allocation on the inventory
+            await context.Publish<AllocationConfirmed>(new
+            {
+                AllocationId = allocationId
+            });
+
+            // Everything went fine so can complete the request
             return context.Completed(new { AllocationId = allocationId });
         }
 

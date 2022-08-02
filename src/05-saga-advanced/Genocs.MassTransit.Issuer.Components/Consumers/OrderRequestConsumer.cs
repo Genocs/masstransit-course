@@ -49,6 +49,7 @@ namespace Genocs.MassTransit.Components.Consumers
                 context.Message.OrderId,
                 context.Message.Timestamp,
                 context.Message.CustomerNumber,
+                context.Message.ShippingAddress,
                 context.Message.PaymentCardNumber,
             });
 

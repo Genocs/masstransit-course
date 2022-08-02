@@ -39,6 +39,7 @@ namespace Genocs.MassTransit.Components.StateMachines.Activities
             {
                 context.Message.OrderId,
                 context.Message.CustomerNumber,
+                context.Message.ShippingAddress,
                 context.Saga.PaymentCardNumber
             });
 

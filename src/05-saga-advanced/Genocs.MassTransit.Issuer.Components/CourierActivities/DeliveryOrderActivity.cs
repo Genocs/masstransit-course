@@ -7,19 +7,19 @@ namespace Genocs.MassTransit.Components.CourierActivities
     public class DeliveryOrderActivity :
         IActivity<DeliveryOrderArguments, DeliveryOrderLog>
     {
-        static readonly Random _random = new Random();
+        //static readonly Random _random = new Random();
 
         public async Task<ExecutionResult> Execute(ExecuteContext<DeliveryOrderArguments> context)
         {
-            string address = context.Arguments.Address;
-            if (string.IsNullOrEmpty(address))
-                throw new ArgumentNullException(nameof(address));
+            string shippingAddress = context.Arguments.ShippingAddress;
+            if (string.IsNullOrEmpty(shippingAddress))
+                throw new ArgumentNullException(nameof(shippingAddress));
 
-            await Task.Delay(_random.Next(10000));
+            //await Task.Delay(_random.Next(10000));
 
-            if (address.StartsWith("via"))
+            if (shippingAddress.StartsWith("via"))
             {
-                throw new InvalidOperationException("via address cannot be used as a valid address.");
+                throw new InvalidOperationException("'via' cannot be used as a valid shippingAddress.");
             }
 
             return context.Completed(new { ShippingCode = "99999999" });

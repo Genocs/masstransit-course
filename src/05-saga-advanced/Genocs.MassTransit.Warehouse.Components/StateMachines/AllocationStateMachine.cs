@@ -12,10 +12,12 @@ namespace Genocs.MassTransit.Warehouse.Components.StateMachines
         {
             Event(() => AllocationCreated, x => x.CorrelateById(m => m.Message.AllocationId));
             Event(() => ReleaseRequested, x => x.CorrelateById(m => m.Message.AllocationId));
+            Event(() => AllocationConfirmed, x => x.CorrelateById(m => m.Message.AllocationId));
+
 
             Schedule(() => HoldExpiration, x => x.HoldDurationToken, s =>
             {
-                s.Delay = TimeSpan.FromMinutes(5);
+                s.Delay = TimeSpan.FromSeconds(15);
                 s.Received = x => x.CorrelateById(m => m.Message.AllocationId);
             });
 
@@ -49,6 +51,10 @@ namespace Genocs.MassTransit.Warehouse.Components.StateMachines
                 When(ReleaseRequested)
                     .Unschedule(HoldExpiration)
                     .Then(context => logger.LogInformation("Allocation Release Granted: {AllocationId}", context.Saga.CorrelationId))
+                    .Finalize(),
+                When(AllocationConfirmed)
+                    .Unschedule(HoldExpiration)
+                    .Then(context => logger.LogInformation("Allocation Completd: {AllocationId}", context.Saga.CorrelationId))
                     .Finalize()
             );
 
@@ -62,5 +68,7 @@ namespace Genocs.MassTransit.Warehouse.Components.StateMachines
 
         public Event<AllocationCreated> AllocationCreated { get; set; }
         public Event<AllocationReleaseRequested> ReleaseRequested { get; set; }
+        public Event<AllocationConfirmed> AllocationConfirmed { get; set; }
+
     }
 }

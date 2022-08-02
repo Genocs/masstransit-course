@@ -15,7 +15,6 @@ namespace Genocs.MassTransit.Components.CourierActivities
             if (string.IsNullOrEmpty(cardNumber))
                 throw new ArgumentNullException(nameof(cardNumber));
 
-            await Task.Delay(1000);
             await Task.Delay(_random.Next(10000));
 
             if (cardNumber.StartsWith("5999"))

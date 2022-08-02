@@ -5,6 +5,6 @@ namespace Genocs.MassTransit.Components.CourierActivities
     public interface DeliveryOrderArguments
     {
         Guid OrderId { get; }
-        string Address { get; }
+        string ShippingAddress { get; }
     }
 }

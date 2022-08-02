@@ -53,7 +53,7 @@ public class OrderController : ControllerBase
     /// <param name="paymentCardNumber"></param>
     /// <returns></returns>
     [HttpPost(Name = "")]
-    public async Task<IActionResult> Post(Guid orderId, string customerNumber, string paymentCardNumber)
+    public async Task<IActionResult> Post(Guid orderId, string customerNumber, string paymentCardNumber, string shippingAddress)
     {
         //Genocs.MassTransit.Contracts:OrderSubmitted
         //var interfaceType = typeof(OrderRequest);
@@ -68,7 +68,8 @@ public class OrderController : ControllerBase
             OrderId = orderId,
             InVar.Timestamp,
             CustomerNumber = customerNumber,
-            PaymentCardNumber = paymentCardNumber
+            PaymentCardNumber = paymentCardNumber,
+            ShippingAddress = shippingAddress
         });
 
         return Ok(orderId);

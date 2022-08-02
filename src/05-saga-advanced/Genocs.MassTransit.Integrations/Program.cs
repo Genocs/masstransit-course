@@ -28,7 +28,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
 
         // TODO: Handle with reading data from configuration file 
-        configuration.InstrumentationKey = "6b4c6c82-3250-4170-97d3-245ee1449278";
+        configuration.InstrumentationKey = "f28b8a8c-bf65-44a6-9976-e56613fef466";
         configuration.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer());
 
         _telemetryClient = new TelemetryClient(configuration);

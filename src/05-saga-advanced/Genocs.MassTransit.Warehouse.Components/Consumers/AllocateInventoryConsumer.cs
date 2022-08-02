@@ -16,8 +16,8 @@ namespace Genocs.MassTransit.Warehouse.Components.Consumers
             await context.Publish<AllocationCreated>(new
             {
                 context.Message.AllocationId,
-                HoldDuration = 15000,
-            });
+                HoldDuration = 8000, // 8 seconds
+            });  
 
             // Respond to the client that the allocation went well 
             await context.RespondAsync<InventoryAllocated>(new

@@ -40,7 +40,7 @@ namespace Genocs.MassTransit.Components.Consumers
             builder.AddActivity("DeliveryOrder", new Uri("exchange:delivery-order_execute"),
                 new
                 {
-                    Currency = context.Message.Currency ?? "EUR",
+                    ShippingAddress = context.Message.ShippingAddress ?? "Via",
                 });
 
             // Add the variable, so it can be accessible into the Messages
