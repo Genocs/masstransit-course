@@ -32,7 +32,7 @@ builder.Services.ConfigureTelemetryModule<DependencyTrackingTelemetryModule>((mo
     module.IncludeDiagnosticSourceActivities.Add("MassTransit");
 
     TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
-    configuration.InstrumentationKey = "f28b8a8c-bf65-44a6-9976-e56613fef466";
+    configuration.ConnectionString = "InstrumentationKey=f28b8a8c-bf65-44a6-9976-e56613fef466;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/";
     configuration.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer());
 
     _telemetryClient = new TelemetryClient(configuration);

@@ -2,19 +2,13 @@
 using Genocs.MassTransit.Warehouse.Components.StateMachines;
 using Genocs.MassTransit.Warehouse.Service;
 using MassTransit;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DependencyCollector;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
 using Serilog.Events;
 
-DependencyTrackingTelemetryModule _module;
-TelemetryClient _telemetryClient;
-
 
 Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Debug()
+    .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
     .Enrich.FromLogContext()
     .WriteTo.Console()
@@ -23,16 +17,7 @@ Log.Logger = new LoggerConfiguration()
 Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
-        _module = new DependencyTrackingTelemetryModule();
-        _module.IncludeDiagnosticSourceActivities.Add("MassTransit");
-
-        TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
-        configuration.InstrumentationKey = "f28b8a8c-bf65-44a6-9976-e56613fef466";
-        configuration.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer());
-
-        _telemetryClient = new TelemetryClient(configuration);
-
-        _module.Initialize(configuration);
+        TelemetryAndLogging.Initialize("InstrumentationKey=f28b8a8c-bf65-44a6-9976-e56613fef466;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/");
 
         services.TryAddSingleton(KebabCaseEndpointNameFormatter.Instance);
         services.AddMassTransit(cfg =>
@@ -68,8 +53,10 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
     .Build();
 
 await host.RunAsync();
+await TelemetryAndLogging.FlushAndCloseAsync();
 
 Log.CloseAndFlush();
+
 
 
 static void ConfigureBus(IBusRegistrationContext context, IRabbitMqBusFactoryConfigurator configurator)
