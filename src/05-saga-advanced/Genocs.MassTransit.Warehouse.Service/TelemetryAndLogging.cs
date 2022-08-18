@@ -13,13 +13,13 @@ internal static class TelemetryAndLogging
     private static TelemetryClient? _telemetryClient;
     private static TelemetryConfiguration? _configuration;
 
-    public static void Initialize(string connectionString)
+    public static void Initialize(HostBuilderContext hostContext, IServiceCollection services)
     {
         _module = new DependencyTrackingTelemetryModule();
         _module.IncludeDiagnosticSourceActivities.Add("MassTransit");
 
         _configuration = TelemetryConfiguration.CreateDefault();
-        _configuration.ConnectionString = connectionString;
+        _configuration.ConnectionString = hostContext.Configuration["ApplicationInsightsConnectionString"];
         _configuration.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer());
 
         _telemetryClient = new TelemetryClient(_configuration);

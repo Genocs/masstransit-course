@@ -1,20 +1,15 @@
-using Azure.Monitor.OpenTelemetry.Exporter;
 using Genocs.MassTransit.Components.Consumers;
 using Genocs.MassTransit.Components.CourierActivities;
 using Genocs.MassTransit.Components.HttpClients;
 using Genocs.MassTransit.Components.StateMachines;
 using Genocs.MassTransit.Components.StateMachines.Activities;
+using Genocs.MassTransit.Issuer.Service;
 using Genocs.MassTransit.Service;
 using Genocs.MassTransit.Warehouse.Contracts;
 using MassTransit;
-using MassTransit.Metadata;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using OpenTelemetry;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 using Serilog;
 using Serilog.Events;
-using System.Diagnostics;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -30,33 +25,7 @@ Log.Logger = new LoggerConfiguration()
 Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
     {
-        services.AddOpenTelemetryTracing(builder =>
-        {
-            builder.SetResourceBuilder(ResourceBuilder.CreateDefault()
-                    .AddService("IssuerService")
-                    .AddTelemetrySdk()
-                    .AddEnvironmentVariableDetector())
-                .AddSource("MassTransit")
-                .AddMongoDBInstrumentation()
-                .AddAzureMonitorTraceExporter(o =>
-                {
-                    o.ConnectionString = hostContext.Configuration["ApplicationInsightsConnectionString"];
-                })
-                .AddJaegerExporter(o =>
-                {
-                    o.AgentHost = HostMetadataCache.IsRunningInContainer ? "jaeger" : "localhost";
-                    o.AgentPort = 6831;
-                    o.MaxPayloadSizeInBytes = 4096;
-                    o.ExportProcessorType = ExportProcessorType.Batch;
-                    o.BatchExportProcessorOptions = new BatchExportProcessorOptions<Activity>
-                    {
-                        MaxQueueSize = 2048,
-                        ScheduledDelayMilliseconds = 5000,
-                        ExporterTimeoutMilliseconds = 30000,
-                        MaxExportBatchSize = 512,
-                    };
-                });
-        });
+        OpenTelemetryInitializer.Initialize(hostContext, services);
 
         // This is a state machine Activity
         services.AddScoped<OrderRequestedActivity>();
@@ -102,8 +71,6 @@ Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
     .Build();
 
 await host.RunAsync();
-
-//await TelemetryAndLogging.FlushAndCloseAsync();
 
 Log.CloseAndFlush();
 

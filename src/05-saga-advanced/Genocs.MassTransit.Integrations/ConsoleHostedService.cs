@@ -1,10 +1,12 @@
 ﻿namespace Genocs.MassTransit.Integrations.Service;
 
-public class ConsoleHostedService : IHostedService
+public class ConsoleHostedService
+    : IHostedService
 {
 
-    public ConsoleHostedService()
+    public ConsoleHostedService(ILogger<ConsoleHostedService> logger)
     {
+        logger.LogError("simple Error");
         // _bus = bus;
     }
 
