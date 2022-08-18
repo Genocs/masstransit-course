@@ -23,7 +23,6 @@
 
 
 	<ItemGroup>
-		<ProjectReference Include="..\Genocs.MassTransit.Issuer.Components\Genocs.MassTransit.Issuer.Components.csproj" />
 		<ProjectReference Include="..\Genocs.MassTransit.Issuer.Contracts\Genocs.MassTransit.Issuer.Contracts.csproj" />
 	</ItemGroup>
 
