@@ -1,16 +1,23 @@
 using Genocs.MassTransit.Contracts;
 using MassTransit;
 using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DependencyCollector;
-using Microsoft.ApplicationInsights.Extensibility;
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
 using Serilog.Events;
+using Azure.Monitor.OpenTelemetry.Exporter;
+using MassTransit.Metadata;
+using System.Diagnostics;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
-    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .MinimumLevel.Override("MassTransit", LogEventLevel.Debug)
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Debug)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Debug)
     .Enrich.FromLogContext()
     .WriteTo.Console()
     .CreateLogger();
@@ -24,20 +31,35 @@ builder.Host.UseSerilog((ctx, lc) => lc
     .WriteTo.Console());
 
 // ***********************************************
-// Azure Application Insight configuration - START
-builder.Services.AddApplicationInsightsTelemetry();
-
-builder.Services.ConfigureTelemetryModule<DependencyTrackingTelemetryModule>((module, o) =>
+// Open Telemetry - START
+builder.Services.AddOpenTelemetryTracing(x =>
 {
-    module.IncludeDiagnosticSourceActivities.Add("MassTransit");
-
-    TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
-    configuration.ConnectionString = "InstrumentationKey=f28b8a8c-bf65-44a6-9976-e56613fef466;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/";
-    configuration.TelemetryInitializers.Add(new HttpDependenciesParsingTelemetryInitializer());
-
-    _telemetryClient = new TelemetryClient(configuration);
+    x.SetResourceBuilder(ResourceBuilder.CreateDefault()
+            .AddService("IssuerApi")
+            .AddTelemetrySdk()
+            .AddEnvironmentVariableDetector())
+        .AddSource("MassTransit")
+        .AddAspNetCoreInstrumentation()
+        .AddAzureMonitorTraceExporter(o =>
+        {
+            o.ConnectionString = builder.Configuration["ApplicationInsightsConnectionString"];
+        })
+        .AddJaegerExporter(o =>
+        {
+            o.AgentHost = HostMetadataCache.IsRunningInContainer ? "jaeger" : "localhost";
+            o.AgentPort = 6831;
+            o.MaxPayloadSizeInBytes = 4096;
+            o.ExportProcessorType = ExportProcessorType.Batch;
+            o.BatchExportProcessorOptions = new BatchExportProcessorOptions<Activity>
+            {
+                MaxQueueSize = 2048,
+                ScheduledDelayMilliseconds = 5000,
+                ExporterTimeoutMilliseconds = 30000,
+                MaxExportBatchSize = 512,
+            };
+        });
 });
-// Azure Application Insight configuration - END
+// Open Telemetry - END
 // ***********************************************
 
 
@@ -65,6 +87,15 @@ builder.Services.AddMassTransit(x =>
 
         //cfg.UseMessageData(new MongoDbMessageDataRepository(IsRunningInContainer ? "mongodb://mongo" : "mongodb://127.0.0.1", "attachments"));
     });
+
+    //x.AddMongoDbOutbox(o =>
+    //{
+    //    o.DisableInboxCleanupService();
+    //    o.ClientFactory(provider => provider.GetRequiredService<IMongoClient>());
+    //    o.DatabaseFactory(provider => provider.GetRequiredService<IMongoDatabase>());
+
+    //    o.UseBusOutbox(bo => bo.DisableDeliveryService());
+    //});
 
     //mt.AddRequestClient<SubmitOrder>(new Uri($"queue:{KebabCaseEndpointNameFormatter.Instance.Consumer<SubmitOrderConsumer>()}"));
 
