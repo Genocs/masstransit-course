@@ -1,8 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using Grpc.Core;
-using Helloworld;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using Serilog.Events;
+
+using Genocs.MassTransit.GRPC.Server.Service;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -11,22 +14,19 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
     .CreateLogger();
 
-const int Port = 30051;
 
+IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureServices((hostContext, services) =>
+    {
+        services.AddHostedService<ConsoleHostedService>();
+    })
+    .ConfigureLogging((hostingContext, logging) =>
+    {
+        logging.AddSerilog(dispose: true);
+        logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+    })
+    .Build();
 
-Server server = new Server
-{
-    Services = { Greeter.BindService(new GreeterImpl()) },
-    Ports = { new ServerPort("localhost", Port, ServerCredentials.Insecure) }
-};
-server.Start();
-
-Log.Logger.Information("Greeter server listening on port " + Port);
-Log.Logger.Information("Press any key to stop the server...");
-
-Console.ReadKey();
-
-server.ShutdownAsync().Wait();
+await host.RunAsync();
 
 Log.CloseAndFlush();
-

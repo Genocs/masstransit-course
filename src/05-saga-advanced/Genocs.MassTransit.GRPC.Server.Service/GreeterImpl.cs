@@ -9,4 +9,3 @@ class GreeterImpl : Greeter.GreeterBase
         return Task.FromResult(new HelloReply { Message = "Hello " + request.Name });
     }
 }
-
