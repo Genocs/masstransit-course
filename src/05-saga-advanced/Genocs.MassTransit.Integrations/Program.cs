@@ -1,4 +1,3 @@
-using Genocs.MassTransit.Integrations.Contracts;
 using Genocs.MassTransit.Integrations.Service;
 using Genocs.MassTransit.Integrations.Service.Consumers;
 using MassTransit;

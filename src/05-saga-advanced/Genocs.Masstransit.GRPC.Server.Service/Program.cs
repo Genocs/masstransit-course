@@ -1,6 +1,15 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Grpc.Core;
 using Helloworld;
+using Serilog;
+using Serilog.Events;
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Debug()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Debug)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
 
 const int Port = 30051;
 
@@ -12,19 +21,12 @@ Server server = new Server
 };
 server.Start();
 
-Console.WriteLine("Greeter server listening on port " + Port);
-Console.WriteLine("Press any key to stop the server...");
+Log.Logger.Information("Greeter server listening on port " + Port);
+Log.Logger.Information("Press any key to stop the server...");
+
 Console.ReadKey();
 
 server.ShutdownAsync().Wait();
 
+Log.CloseAndFlush();
 
-
-class GreeterImpl : Greeter.GreeterBase
-{
-    // Server side handler of the SayHello RPC
-    public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
-    {
-        return Task.FromResult(new HelloReply { Message = "Hello " + request.Name });
-    }
-}
