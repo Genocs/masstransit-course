@@ -1,6 +1,10 @@
+using Genocs.MassTransit.Integrations.Contracts;
 using Genocs.MassTransit.Integrations.Service;
+using Genocs.MassTransit.Integrations.Service.Consumers;
+using MassTransit;
 using Serilog;
 using Serilog.Events;
+using System.Reflection;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
@@ -17,6 +21,36 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         OpenTelemetryInitializer.Initialize(hostContext, services);
         //TelemetryAndLogging.Initialize(hostContext, services);
+
+        services.AddMassTransit(x =>
+        {
+            // Point 1.
+            //x.AddServiceBusMessageScheduler();
+
+            x.SetKebabCaseEndpointNameFormatter();
+
+            var entryAssembly = Assembly.GetEntryAssembly();
+            x.AddConsumer<SettlementSubmittedConsumer>();
+
+            x.UsingAzureServiceBus((context, cfg) =>
+            {
+
+                cfg.Host(hostContext.Configuration.GetConnectionString("AzureServiceBus"));
+
+                // Point 2. See Point 1.
+                //cfg.UseServiceBusMessageScheduler();
+
+                // Subscribe to OrderSubmitted directly from the topic, instead of configuring a queue
+                cfg.SubscriptionEndpoint<SettlementSubmitted>("settlement-submitted", e =>
+                {
+                    e.ConfigureConsumer<SettlementSubmittedConsumer>(context);
+                });
+
+                // Configure Endpoint to send messages over the transport
+                cfg.ConfigureEndpoints(context);
+            });
+        });
+
 
         services.AddHostedService<ConsoleHostedService>();
     })

@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DC2A2EEB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Issuer", "Issuer", "{A058B42B-9220-4A8F-BEFF-46915B6B69A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genocs.MassTransit.Integrations.Contracts", "Genocs.MassTransit.Integrations.Contracts\Genocs.MassTransit.Integrations.Contracts.csproj", "{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{1A1B4855-CF0A-489C-A39B-C9295DC4D128}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A1B4855-CF0A-489C-A39B-C9295DC4D128}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A1B4855-CF0A-489C-A39B-C9295DC4D128}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +104,7 @@ Global
 		{13A926D3-E97E-4E4F-98C1-1899327FEC4A} = {3A651190-69B4-4370-979B-95AFE4237C4F}
 		{DC4940C4-550F-44C0-AD14-C68D501F2A6C} = {3A651190-69B4-4370-979B-95AFE4237C4F}
 		{1A1B4855-CF0A-489C-A39B-C9295DC4D128} = {55E4D4A1-7487-44DF-AE0D-664D96E34654}
+		{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41} = {55E4D4A1-7487-44DF-AE0D-664D96E34654}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0F5DD1F-AC14-40B3-9ED2-4DE288A22B0D}

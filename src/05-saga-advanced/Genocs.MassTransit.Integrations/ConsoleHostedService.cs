@@ -1,21 +1,29 @@
-﻿namespace Genocs.MassTransit.Integrations.Service;
+﻿using Genocs.MassTransit.Integrations.Contracts;
+using MassTransit;
+
+namespace Genocs.MassTransit.Integrations.Service;
 
 public class ConsoleHostedService
     : IHostedService
 {
     private readonly ILogger _logger;
-    public ConsoleHostedService(ILogger<ConsoleHostedService> logger)
+    private readonly IBus _bus;
+
+    public ConsoleHostedService(ILogger<ConsoleHostedService> logger, IBus bus)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _logger.LogInformation("ConsoleHostedService: logger is ok!");
-
-        // _bus = bus;
+        _bus = bus ?? throw new ArgumentNullException(nameof(bus));
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        // Command sent to the bus (in case on Azure Service Bus)
         _logger.LogInformation("ConsoleHostedService: StartAsync called");
-        await Task.CompletedTask;
+        await _bus.Publish<SettlementSubmitted>(new {
+            Id = Guid.NewGuid().ToString(),
+            Code = $"Tag_{Guid.NewGuid()}",
+            ProcessedTimestamp = DateTime.UtcNow
+        });
         //  await _bus.StartAsync(cancellationToken).ConfigureAwait(false);
     }
 
