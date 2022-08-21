@@ -37,7 +37,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DC2A2EEB
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Issuer", "Issuer", "{A058B42B-9220-4A8F-BEFF-46915B6B69A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genocs.MassTransit.Integrations.Contracts", "Genocs.MassTransit.Integrations.Contracts\Genocs.MassTransit.Integrations.Contracts.csproj", "{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.Integrations.Contracts", "Genocs.MassTransit.Integrations.Contracts\Genocs.MassTransit.Integrations.Contracts.csproj", "{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mobile", "Mobile", "{061EC219-2F31-43B0-941C-FF508ADD7AAF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genocs.MassTransit.GRPC.Contracts", "Genocs.MassTransit.GRPC.Contracts\Genocs.MassTransit.GRPC.Contracts.csproj", "{684D8C26-D0D2-44BA-8421-5E411AF89B7B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genocs.Masstransit.GRPC.Server.Service", "Genocs.Masstransit.GRPC.Server.Service\Genocs.Masstransit.GRPC.Server.Service.csproj", "{F137CE9E-8D22-4119-A671-3144F786BC07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Genocs.MassTransit.GRPC.Client.Service", "Genocs.MassTransit.GRPC.Client.Service\Genocs.MassTransit.GRPC.Client.Service.csproj", "{D45CAE28-9156-4A8A-81C8-A24069003F70}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +97,18 @@ Global
 		{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{684D8C26-D0D2-44BA-8421-5E411AF89B7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{684D8C26-D0D2-44BA-8421-5E411AF89B7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{684D8C26-D0D2-44BA-8421-5E411AF89B7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{684D8C26-D0D2-44BA-8421-5E411AF89B7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F137CE9E-8D22-4119-A671-3144F786BC07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F137CE9E-8D22-4119-A671-3144F786BC07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F137CE9E-8D22-4119-A671-3144F786BC07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F137CE9E-8D22-4119-A671-3144F786BC07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D45CAE28-9156-4A8A-81C8-A24069003F70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D45CAE28-9156-4A8A-81C8-A24069003F70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D45CAE28-9156-4A8A-81C8-A24069003F70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D45CAE28-9156-4A8A-81C8-A24069003F70}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +125,9 @@ Global
 		{DC4940C4-550F-44C0-AD14-C68D501F2A6C} = {3A651190-69B4-4370-979B-95AFE4237C4F}
 		{1A1B4855-CF0A-489C-A39B-C9295DC4D128} = {55E4D4A1-7487-44DF-AE0D-664D96E34654}
 		{31F0CD9E-12E3-453B-BFBA-08EB06EB8C41} = {55E4D4A1-7487-44DF-AE0D-664D96E34654}
+		{684D8C26-D0D2-44BA-8421-5E411AF89B7B} = {061EC219-2F31-43B0-941C-FF508ADD7AAF}
+		{F137CE9E-8D22-4119-A671-3144F786BC07} = {061EC219-2F31-43B0-941C-FF508ADD7AAF}
+		{D45CAE28-9156-4A8A-81C8-A24069003F70} = {061EC219-2F31-43B0-941C-FF508ADD7AAF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0F5DD1F-AC14-40B3-9ED2-4DE288A22B0D}

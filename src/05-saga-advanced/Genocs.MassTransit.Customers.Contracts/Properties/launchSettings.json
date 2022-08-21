@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Genocs.MassTransit.Customers.Contracts": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:50019;http://localhost:50020"
+    }
+  }
+}
