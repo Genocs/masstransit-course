@@ -40,8 +40,14 @@ IHost host = Host.CreateDefaultBuilder(args)
                 // Point 2. See Point 1.
                 //cfg.UseServiceBusMessageScheduler();
 
-                // Subscribe to OrderSubmitted directly from the topic, instead of configuring a queue
-                cfg.SubscriptionEndpoint<SettlementSubmitted>("settlement-submitted", e =>
+                // Option 1: Subscribe to SettlementSubmitted directly from the topic, instead of configuring a queue
+                //cfg.SubscriptionEndpoint<SettlementSubmitted>("settlement-submitted", e =>
+                //{
+                //    e.ConfigureConsumer<SettlementSubmittedConsumer>(context);
+                //});
+
+                // Option 2: Subscribe to SettlementSubmitted with manual subscription and topic
+                cfg.SubscriptionEndpoint("settlement-submitted-to-integration", "settlement-topic", e =>
                 {
                     e.ConfigureConsumer<SettlementSubmittedConsumer>(context);
                 });

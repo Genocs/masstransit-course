@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MassTransit;
+using System;
 
 namespace Genocs.MassTransit.Integrations.Contracts
 {
@@ -6,6 +7,8 @@ namespace Genocs.MassTransit.Integrations.Contracts
     /// <summary>
     /// This event is sent by the partner when the settlement process is completed
     /// </summary>
+    /// 
+    [EntityName("settlement-topic")]
     public class SettlementSubmitted
     {
         public string? Id { get; set; }
